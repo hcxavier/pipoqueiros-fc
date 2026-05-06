@@ -8,4 +8,13 @@ Content-Type: application/json
 }
 
 ### Consulta de Bolão por Código
-GET http://localhost:3333/betting-groups/505KWR
+GET http://localhost:3333/betting-groups/YJD6UE
+
+### Adicionar usuário ao bolão
+POST http://localhost:3333/betting-groups/add-user
+Content-Type: application/json
+
+{
+    "userId": "7718e794-a6a3-4e94-a578-d6e390ef5944",
+    "bettingGroupId": "YJD6UE"
+}
