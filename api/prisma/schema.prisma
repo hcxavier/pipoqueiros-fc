@@ -15,5 +15,26 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  name      String?
+  name      String
+  reatedGroups  BettingGroup[]     
+  participations GroupParticipant[]
+}
+
+model BettingGroup {
+  id           String             @id @default(uuid())
+  name         String
+  code         String             @unique
+  creatorId    String
+  creator User @relation(fields: [creatorId], references: [id])
+  participants GroupParticipant[]
+}
+
+model GroupParticipant {
+  bettingGroupId String
+  userId         String
+  score          Int          @default(0)
+  bettingGroup BettingGroup @relation(fields: [bettingGroupId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@id([bettingGroupId, userId])
 }
