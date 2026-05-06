@@ -1,13 +1,16 @@
+import "dotenv/config";
+import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client";
 
 const connectionString = `${process.env.DATABASE_URL}`;
 
-const adapter = new PrismaPg({
+const pool = new Pool({
     connectionString,
 });
+const adapter = new PrismaPg(pool);
 
-const globalForPrisma = global as unknown as { prisma: PrismaPg };
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma =
     globalForPrisma.prisma ||
