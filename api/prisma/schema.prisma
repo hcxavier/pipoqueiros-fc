@@ -12,12 +12,36 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MatchStatus {
+  SCHEDULED
+  IN_PROGRESS
+  FINISHED
+}
+
+enum PredicationType {
+  EXACT_SCORE
+  MATCH_RESULT
+}
+
+enum ResultGuess {
+  HOME_WIN
+  AWAY_WIN
+  DRAW
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  reatedGroups  BettingGroup[]     
+  id             String             @id @default(uuid())
+  email          String             @unique
+  name           String
+  role           Role               @default(USER)
+  reatedGroups   BettingGroup[]
   participations GroupParticipant[]
+  predictions    Predication[]
 }
 
 model BettingGroup {
@@ -25,7 +49,7 @@ model BettingGroup {
   name         String
   code         String             @unique
   creatorId    String
-  creator User @relation(fields: [creatorId], references: [id])
+  creator      User               @relation(fields: [creatorId], references: [id])
   participants GroupParticipant[]
 }
 
@@ -33,8 +57,52 @@ model GroupParticipant {
   bettingGroupId String
   userId         String
   score          Int          @default(0)
-  bettingGroup BettingGroup @relation(fields: [bettingGroupId], references: [id])
-  user         User         @relation(fields: [userId], references: [id])
+  bettingGroup   BettingGroup @relation(fields: [bettingGroupId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
 
   @@id([bettingGroupId, userId])
+}
+
+model team {
+  id               String  @id @default(uuid())
+  name             String
+  abbreviated_name String  @unique
+  shield_url       String
+  home_matches     match[] @relation("HomeTeam")
+  away_matches     match[] @relation("AwayTeam")
+}
+
+model match {
+  id           String      @id @default(uuid())
+  round        Int
+  home_team_id String
+  away_team_id String
+  match_date   DateTime
+  home_score   Int?
+  away_score   Int?
+  status       MatchStatus @default(SCHEDULED)
+
+  home_team   team          @relation("HomeTeam", fields: [home_team_id], references: [id])
+  away_team   team          @relation("AwayTeam", fields: [away_team_id], references: [id])
+  predictions Predication[]
+}
+
+model Predication {
+  id      String          @id @default(uuid())
+  userId  String
+  matchId String
+  type    PredicationType
+
+  // Se for EXACT_SCORE
+  home_score_guess Int?
+  away_score_guess Int?
+
+  // Se for MATCH_RESULT
+  result_guess  ResultGuess?
+  points_earned Int          @default(0)
+
+  user  User  @relation(fields: [userId], references: [id])
+  match match @relation(fields: [matchId], references: [id])
+
+  @@unique([userId, matchId]) // Um palpite por usuário por jogo
 }
