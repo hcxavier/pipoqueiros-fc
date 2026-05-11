@@ -1,0 +1,213 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: PipoqueirosFC
+meta:
+  id: wrk_eaa7bbd267e9420e952b58de5032cec0
+  created: 1778538810325
+  modified: 1778538810325
+  description: ""
+collection:
+  - url: "{{ _._server }}/betting-groups"
+    name: criar um BOLÂO
+    meta:
+      id: req_70c9308a969f46a8b0ea34e7edacc2c3
+      created: 1778538831003
+      modified: 1778539242562
+      isPrivate: false
+      description: ""
+      sortKey: -1778538831003
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+            "name": "Bolão dos Cara",
+            "creatorId": "85b11e38-3306-4690-85bb-859f65b6de16"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _._server }}/betting-groups/YJD6UE"
+    name: consultar BOLÂO por CÓDIGO
+    meta:
+      id: req_96d24ba3d35345bc9eeaac8e54101798
+      created: 1778538884106
+      modified: 1778539235170
+      isPrivate: false
+      description: ""
+      sortKey: -1778538884106
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _._server }}/betting-groups/add-user"
+    name: adicionar USUÁRIO a um BOLÃO
+    meta:
+      id: req_86504ebeb99e4bc6bbed9d4eb7596233
+      created: 1778538922772
+      modified: 1778539227583
+      isPrivate: false
+      description: ""
+      sortKey: -1778538922772
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "userId": "7718e794-a6a3-4e94-a578-d6e390ef5944",
+            "bettingGroupId": "YJD6UE"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _._server }}/teams"
+    name: criar um TIME
+    meta:
+      id: req_f6efe7a62b114e56ab4c52f570f68d83
+      created: 1778538975104
+      modified: 1778539219377
+      isPrivate: false
+      description: ""
+      sortKey: -1778538975104
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "name": "Varmengo FC",
+            "abbreviated_name": "VAR",
+            "shield_url": "url_aqui"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _._server }}/matches"
+    name: criar uma PARTIDA
+    meta:
+      id: req_a70d3ab76fc44b1d868b5aea5a043204
+      created: 1778539049692
+      modified: 1778539212992
+      isPrivate: false
+      description: ""
+      sortKey: -1778539049692
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "round": 20,
+            "home_team_id": "3dc08a41-8720-460b-a478-d4ad5a621201",
+            "away_team_id": "51b9e517-71cf-46aa-9d12-db1cc8579b22",
+            "match_date": "2026-05-12T20:00:00.000Z"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _._server }}/predications "
+    name: criar um PALPITE
+    meta:
+      id: req_0514c965a4434690a5fe562efb8ea305
+      created: 1778539094940
+      modified: 1778539193998
+      isPrivate: false
+      description: ""
+      sortKey: -1778539094940
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "home_score_guess": 2,
+            "away_score_guess": 1,
+            "predicationType": "EXACT_SCORE",
+            "userId": "7718e794-a6a3-4e94-a578-d6e390ef5944",
+            "matchId": "85feb558-9c77-486b-b2fa-94eafdaf4c61"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_7cb4e2b8720cbe1813ec521efa0eb8560e243bc1
+    created: 1778538810381
+    modified: 1778538810381
+environments:
+  name: Base Environment
+  meta:
+    id: env_7cb4e2b8720cbe1813ec521efa0eb8560e243bc1
+    created: 1778538810337
+    modified: 1778539172044
+    isPrivate: false
+  data:
+    _server: http://localhost:3333
