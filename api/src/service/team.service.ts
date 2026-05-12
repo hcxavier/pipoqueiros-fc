@@ -12,3 +12,13 @@ export async function createTeamService(data: CreateTeamBody) {
 
     return team;
 }
+
+export async function getAllTeamsService() {
+    const teams = await prisma.team.findMany({
+        orderBy: {
+            name: 'asc',
+        },
+    });
+
+    return teams;
+}

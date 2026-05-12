@@ -82,3 +82,73 @@ export async function addUserToBettingGroupService(data: addUserToBettingGroupPa
         },
     });
 }
+
+export async function getBettingGroupRankingService(idOrCode: string) {
+    const bettingGroup = await prisma.bettingGroup.findFirst({
+        where: {
+            OR: [{ id: idOrCode }, { code: idOrCode }],
+        },
+    });
+
+    if (!bettingGroup) {
+        throw new Error("Betting group not found");
+    }
+
+    const ranking = await prisma.groupParticipant.findMany({
+        where: {
+            bettingGroupId: bettingGroup.id,
+        },
+        select: {
+            score: true,
+            user: {
+                select: {
+                    name: true,
+                },
+            },
+        },
+        orderBy: {
+            score: 'desc',
+        },
+    });
+
+    return ranking.map(participant => ({
+        name: participant.user.name,
+        score: participant.score,
+    }));
+}
+
+export async function getBettingGroupParticipantsService(idOrCode: string) {
+    const bettingGroup = await prisma.bettingGroup.findFirst({
+        where: {
+            OR: [{ id: idOrCode }, { code: idOrCode }],
+        },
+    });
+
+    if (!bettingGroup) {
+        throw new Error("Betting group not found");
+    }
+
+    const participants = await prisma.groupParticipant.findMany({
+        where: {
+            bettingGroupId: bettingGroup.id,
+        },
+        select: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+        orderBy: {
+            user: {
+                name: 'asc',
+            },
+        },
+    });
+
+    return participants.map(participant => ({
+        id: participant.user.id,
+        name: participant.user.name,
+    }));
+}

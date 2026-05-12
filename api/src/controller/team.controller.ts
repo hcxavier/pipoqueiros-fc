@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createTeamService } from "../service/team.service";
+import { createTeamService, getAllTeamsService } from "../service/team.service";
 import { CreateTeamBody } from "../types/team-types";
 
 export async function createTeam(request: FastifyRequest, reply: FastifyReply) {
@@ -15,5 +15,15 @@ export async function createTeam(request: FastifyRequest, reply: FastifyReply) {
     } catch (error) {
         console.error(error);
         return reply.status(500).send({ error: "Failed to create team" });
+    }
+}
+
+export async function getAllTeams(request: FastifyRequest, reply: FastifyReply) {
+    try {
+        const teams = await getAllTeamsService();
+        return reply.status(200).send(teams);
+    } catch (error) {
+        console.error(error);
+        return reply.status(500).send({ error: "Failed to fetch teams" });
     }
 }

@@ -4,6 +4,8 @@ import {
     addUserToBettingGroupService,
     createBettingGroupService,
     findBettingGroupByCodeService,
+    getBettingGroupRankingService,
+    getBettingGroupParticipantsService,
 } from "../service/betting-group.service";
 
 export async function createBettingGroupController(request: FastifyRequest, reply: FastifyReply) {
@@ -62,5 +64,43 @@ export async function addUserToBettingGroupController(request: FastifyRequest, r
             return reply.status(404).send({ error: error.message });
         }
         return reply.status(500).send({ error: "An error occurred while adding the user to the betting group" });
+    }
+}
+
+export async function getBettingGroupRankingController(request: FastifyRequest, reply: FastifyReply) {
+    const { idOrCode } = request.params as { idOrCode: string };
+
+    if (!idOrCode) {
+        return reply.status(400).send({ error: "Betting Group ID or Code is required" });
+    }
+
+    try {
+        const ranking = await getBettingGroupRankingService(idOrCode);
+        return reply.status(200).send(ranking);
+    } catch (error: any) {
+        console.error("Error fetching betting group ranking:", error);
+        if (error.message === "Betting group not found") {
+            return reply.status(404).send({ error: error.message });
+        }
+        return reply.status(500).send({ error: "An error occurred while fetching the ranking" });
+    }
+}
+
+export async function getBettingGroupParticipantsController(request: FastifyRequest, reply: FastifyReply) {
+    const { idOrCode } = request.params as { idOrCode: string };
+
+    if (!idOrCode) {
+        return reply.status(400).send({ error: "Betting Group ID or Code is required" });
+    }
+
+    try {
+        const participants = await getBettingGroupParticipantsService(idOrCode);
+        return reply.status(200).send(participants);
+    } catch (error: any) {
+        console.error("Error fetching betting group participants:", error);
+        if (error.message === "Betting group not found") {
+            return reply.status(404).send({ error: error.message });
+        }
+        return reply.status(500).send({ error: "An error occurred while fetching the participants" });
     }
 }

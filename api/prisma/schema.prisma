@@ -106,3 +106,8 @@ model Predication {
 
   @@unique([userId, matchId]) // Um palpite por usuário por jogo
 }
+
+model system_settings {
+  id                   Int @id @default(1)
+  current_active_round Int @default(1)
+}

@@ -4,6 +4,7 @@ import { bettingGroupRoute } from "./routes/betting-group.route";
 import { predicationRoute } from "./routes/predication.route";
 import { matchRoute } from "./routes/match.route";
 import { teamRoute } from "./routes/team.route";
+import { systemRoute } from "./routes/system.route";
 
 const app = Fastify();
 
@@ -16,6 +17,7 @@ app.register(bettingGroupRoute);
 app.register(predicationRoute);
 app.register(matchRoute);
 app.register(teamRoute);
+app.register(systemRoute);
 
 app.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
     console.log("Server running on http://localhost:3333");
