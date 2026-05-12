@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MatchStatus {
+  SCHEDULED
+  IN_PROGRESS
+  FINISHED
+}
+
+enum PredicationType {
+  EXACT_SCORE
+  MATCH_RESULT
+}
+
+enum ResultGuess {
+  HOME_WIN
+  AWAY_WIN
+  DRAW
+}
+
+model User {
+  id             String             @id @default(uuid())
+  email          String             @unique
+  name           String
+  role           Role               @default(USER)
+  reatedGroups   BettingGroup[]
+  participations GroupParticipant[]
+  predictions    Predication[]
+  emailVerified  Boolean            @default(false)
+  image          String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  sessions       Session[]
+  accounts       Account[]
+
+  @@map("user")
+}
+
+model BettingGroup {
+  id           String             @id @default(uuid())
+  name         String
+  code         String             @unique
+  creatorId    String
+  creator      User               @relation(fields: [creatorId], references: [id])
+  participants GroupParticipant[]
+}
+
+model GroupParticipant {
+  bettingGroupId String
+  userId         String
+  score          Int          @default(0)
+  bettingGroup   BettingGroup @relation(fields: [bettingGroupId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@id([bettingGroupId, userId])
+}
+
+model team {
+  id               String  @id @default(uuid())
+  name             String
+  abbreviated_name String  @unique
+  shield_url       String
+  home_matches     match[] @relation("HomeTeam")
+  away_matches     match[] @relation("AwayTeam")
+}
+
+model match {
+  id           String      @id @default(uuid())
+  round        Int
+  home_team_id String
+  away_team_id String
+  match_date   DateTime
+  home_score   Int?
+  away_score   Int?
+  status       MatchStatus @default(SCHEDULED)
+
+  home_team   team          @relation("HomeTeam", fields: [home_team_id], references: [id])
+  away_team   team          @relation("AwayTeam", fields: [away_team_id], references: [id])
+  predictions Predication[]
+}
+
+model Predication {
+  id      String          @id @default(uuid())
+  userId  String
+  matchId String
+  type    PredicationType
+
+  // Se for EXACT_SCORE
+  home_score_guess Int?
+  away_score_guess Int?
+
+  // Se for MATCH_RESULT
+  result_guess  ResultGuess?
+  points_earned Int          @default(0)
+
+  user  User  @relation(fields: [userId], references: [id])
+  match match @relation(fields: [matchId], references: [id])
+
+  // Um palpite por usuário por jogo
+  @@unique([userId, matchId])
+}
+
+model system_settings {
+  id                   Int @id @default(1)
+  current_active_round Int @default(1)
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
