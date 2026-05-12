@@ -1,6 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:mobile/model/betting_group_model.dart';
+import 'package:mobile/model/settings_model.dart';
 
 class LocalStorage {
   static final LocalStorage _instance = LocalStorage._internal();
@@ -13,14 +15,10 @@ class LocalStorage {
 
   static Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
-    _instance.isar = await Isar.open(
-      [
-        // PlayerModelSchema,
-        // SettingsModelSchema,   // Adicione outros schemas aqui
-        // HistoryModelSchema,
-      ],
-      directory: dir.path,
-    );
+    _instance.isar = await Isar.open([
+      BettingGroupModelSchema,
+      SettingsModelSchema,
+    ], directory: dir.path);
   }
 
   // Isar Abstrações
