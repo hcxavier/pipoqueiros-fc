@@ -446,12 +446,133 @@ collection:
             send: true
             store: true
           rebuildPath: true
+  - name: Autenticação
+    meta:
+      id: fld_978938fb05c448bda8bf4e84d566cb9c
+      created: 1778592841661
+      modified: 1778592851396
+      sortKey: -1778592841661
+      description: ""
+    children:
+      - url: 192.168.0.109:3333/api/auth/sign-in/social
+        name: login com o google
+        meta:
+          id: req_6690940f9e004881a89daaefc8ab2ce3
+          created: 1778591368808
+          modified: 1778592869321
+          isPrivate: false
+          description: ""
+          sortKey: -1778592869257
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "provider": "google",
+              "idToken": {
+                "token": "eyJhbGciOiJSUz..."
+              }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _._server }}/api/auth/sign-up/email"
+        name: criar usuário email e senha
+        meta:
+          id: req_780f9ce7712142249080f5a8c5dbfdbd
+          created: 1778593046655
+          modified: 1778593230423
+          isPrivate: false
+          description: ""
+          sortKey: -1778593046655
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                  "name": "Nome do Usuário",
+                 "email": "usuario@email.com",
+                 "password": "senha-segura-aqui",
+                "image": "https://link-opcional-da-foto.com/foto.jpg"
+               }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _._server }}/api/auth/sign-in/email"
+        name: login com email e senha
+        meta:
+          id: req_9ed213453d5e437a94b195e52b7ad0f2
+          created: 1778593267177
+          modified: 1778593691263
+          isPrivate: false
+          description: ""
+          sortKey: -1778593267177
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                 "email": "usuario@email.com",
+                 "password": "senha-segura-aqui" 
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.0
+            description: ""
+            disabled: false
+          - name: Origin
+            value: http://localhost:3333
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
 cookieJar:
   name: Default Jar
   meta:
     id: jar_7cb4e2b8720cbe1813ec521efa0eb8560e243bc1
     created: 1778538810381
-    modified: 1778538810381
+    modified: 1778593673976
+  cookies:
+    - id: 40378443-c35a-4744-9f53-aa612b564422
+      key: better-auth.session_token
+      value: KqMHyVcj8BTgyrOx3Bv5CyqNZAqM3ZGz.xsHsz4rIkM7XEaO0Au2Poi2V%2B97dBoSgCcE%2FT69Ga8U%3D
+      domain: localhost
+      path: /
+      secure: false
+      httpOnly: true
+      hostOnly: true
 environments:
   name: Base Environment
   meta:
