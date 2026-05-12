@@ -1,25 +1,51 @@
-import 'package:isar/isar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LocalStorage {
   static final LocalStorage _instance = LocalStorage._internal();
-  
-  late final Isar _isar;
-  late final FlutterSecureStorage _secureStorage;
+  factory LocalStorage() => _instance;
 
-  LocalStorage._internal() {
-    _secureStorage = const FlutterSecureStorage();
+  LocalStorage._internal();
+
+  late final Isar isar;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  static Future<void> init() async {
+    final dir = await getApplicationDocumentsDirectory();
+    _instance.isar = await Isar.open(
+      [
+        // PlayerModelSchema,
+        // SettingsModelSchema,   // Adicione outros schemas aqui
+        // HistoryModelSchema,
+      ],
+      directory: dir.path,
+    );
   }
 
-  factory LocalStorage() {
-    return _instance;
+  // Isar Abstrações
+  Future<T> writeTxn<T>(Future<T> Function() callback) async {
+    return await isar.writeTxn(callback);
   }
 
-  Future<void> initialize(Isar isar) async {
-    _isar = isar;
+  Future<T> readTxn<T>(Future<T> Function() callback) async {
+    return await isar.txn(callback);
   }
 
-  Isar get isar => _isar;
-  
-  FlutterSecureStorage get secureStorage => _secureStorage;
+  Future<void> clearAll() async {
+    await isar.writeTxn(() => isar.clear());
+  }
+
+  // Secure Storage Abstrações
+  Future<void> writeSecure(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
+  }
+
+  Future<String?> readSecure(String key) async {
+    return await _secureStorage.read(key: key);
+  }
+
+  Future<void> deleteSecure(String key) async {
+    await _secureStorage.delete(key: key);
+  }
 }
