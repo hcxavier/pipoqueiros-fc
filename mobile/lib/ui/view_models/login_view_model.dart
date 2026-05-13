@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
-class LoginViewModel {
+class LoginViewModel extends ChangeNotifier {
   
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 

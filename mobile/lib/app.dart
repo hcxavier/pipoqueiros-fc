@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/constants/theme.dart';
 import 'package:mobile/routes.dart';
 
 class MyApp extends StatelessWidget {
@@ -8,9 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pipoqueiros FC',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: AppThemes.darkTheme,
       routes: AppRoutes.routes,
       initialRoute: AppRoutes.login,
     );
