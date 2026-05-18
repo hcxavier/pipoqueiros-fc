@@ -5,9 +5,11 @@ import { predicationRoute } from "./routes/predication.route";
 import { matchRoute } from "./routes/match.route";
 import { teamRoute } from "./routes/team.route";
 import { systemRoute } from "./routes/system.route";
-import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "@fastify/cors";
+import fastifySwagger from "@fastify/swagger";
+import { jsonSchemaTransform } from "fastify-type-provider-zod";
+import fastifyApiReference from "@scalar/fastify-api-reference";
 
 const app = Fastify({
     logger: true,
@@ -16,6 +18,47 @@ const app = Fastify({
 app.register(cors, {
     origin: "*",
     credentials: true,
+});
+
+app.get("/swagger.json", async () => {
+    return app.swagger();
+});
+
+app.register(fastifySwagger, {
+    openapi: {
+        info: {
+            title: "PipoqueirosFC API",
+            description: "API para o aplicativo PipoqueirosFC",
+            version: "1.0.0",
+        },
+
+        servers: [
+            {
+                description: "Localhost",
+                url: "http://localhost:3333",
+            },
+        ],
+    },
+
+    transform: jsonSchemaTransform,
+});
+
+app.register(fastifyApiReference, {
+    routePrefix: "/api-docs",
+    configuration: {
+        sources: [
+            {
+                title: "PipoqueirosFC API",
+                slug: "pipoqueiros-fc-api",
+                url: "/swagger.json",
+            },
+            {
+                title: "Better Auth",
+                slug: "better-auth-api",
+                url: "/api/auth/open-api/generate-schema",
+            },
+        ],
+    },
 });
 
 app.get("/", async () => {
