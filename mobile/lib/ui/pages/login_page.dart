@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/constants/styles.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:provider/provider.dart';
@@ -25,23 +26,30 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 128.0, bottom: 48.0),
-                child: Column(
-                  children: [
-                    Text('Logo', style: AppFonts.titleLarge),
-                  ],
-                ),
+                child: SvgPicture.asset('assets/logo/logo.svg', width: 120, height: 120),
               ),
               Expanded(
                 child: ScrollConfiguration(
                   behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
                   child: SingleChildScrollView(
                     physics: const ClampingScrollPhysics(),
-                    reverse: true,
-                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0),
+                    padding: const EdgeInsets.only(top:78.0, left: 24.0, right: 24.0, bottom: 24.0),
                     child: CardLogin(
                       formKey: _formKey,
                       children: [
-                        PrimaryButton(onPressed: () => {}, text: 'ENTRAR',),
+                        CustomInputText(obscureText: false, hintText: 'Email', keyboardType: TextInputType.emailAddress,
+                          prefixIcon: Icons.email_outlined, validator: (value) {},
+                        ),
+                        CustomInputText(obscureText: true, hintText: 'Senha', keyboardType: TextInputType.text,
+                          prefixIcon: Icons.lock_outlined, validator: (value) {},
+                        ),
+                        PrimaryButton(onPressed: () => {}, text: 'ENTRAR'),
+                        GoogleButton(onPressed: () async {}, text: 'ENTRAR COM GOOGLE'),
+                        SizedBox(height: 16),
+                        Row(children: [
+                            Text("Ainda não possui uma conta? ", style: AppFonts.caption),
+                            Text("Cadastre-se agora", style: AppFonts.captionActive),
+                        ],)
                       ]
                     ),
                   )

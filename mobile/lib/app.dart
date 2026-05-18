@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Pipoqueiros FC',
       theme: AppThemes.darkTheme,
       routes: AppRoutes.routes,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
     );
   }
 }

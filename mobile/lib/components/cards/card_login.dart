@@ -18,7 +18,7 @@ class CardLogin extends StatelessWidget {
                 child: Form(
                   key: formKey, 
                   child: Column(
-                    spacing: 12,
+                    spacing: 18,
                     children: children
                   )
                 ),
