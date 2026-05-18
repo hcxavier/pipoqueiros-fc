@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { createPredicationController } from "../controller/predication.controller";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { createPredicationSchema } from "../types/predication-types";
+import { authMiddleware } from "../lib/auth-middleware";
 
 export async function predicationRoute(app: FastifyInstance) {
     const publicServer = app.withTypeProvider<ZodTypeProvider>();
@@ -9,10 +10,12 @@ export async function predicationRoute(app: FastifyInstance) {
     publicServer.route({
         method: "POST",
         url: "/predications",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Predications"],
-            description: "Criar uma nova predição (palpite)",
+            description: "[🔒 Autenticado] Criar uma nova predição (palpite)",
             body: createPredicationSchema,
+            security: [{ bearerAuth: [] }],
         },
         handler: createPredicationController,
     });

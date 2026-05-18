@@ -9,6 +9,7 @@ import {
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { createBettingGroupSchema, addUserToBettingGroupSchema } from "../types/betting-group-types";
 import z from "zod";
+import { authMiddleware } from "../lib/auth-middleware";
 
 export async function bettingGroupRoute(app: FastifyInstance) {
     const publicServer = app.withTypeProvider<ZodTypeProvider>();
@@ -16,10 +17,12 @@ export async function bettingGroupRoute(app: FastifyInstance) {
     publicServer.route({
         method: "POST",
         url: "/betting-groups",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Betting Groups"],
-            description: "Criar um novo bolão",
+            description: "[🔒 Autenticado] Criar um novo bolão",
             body: createBettingGroupSchema,
+            security: [{ bearerAuth: [] }],
         },
         handler: createBettingGroupController,
     });
@@ -27,12 +30,14 @@ export async function bettingGroupRoute(app: FastifyInstance) {
     publicServer.route({
         method: "GET",
         url: "/betting-groups/:code",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Betting Groups"],
-            description: "Buscar bolão pelo código",
+            description: "[🔒 Autenticado] Buscar bolão pelo código",
             params: z.object({
                 code: z.string(),
             }),
+            security: [{ bearerAuth: [] }],
         },
         handler: findBettingGroupByCodeController,
     });
@@ -40,10 +45,12 @@ export async function bettingGroupRoute(app: FastifyInstance) {
     publicServer.route({
         method: "POST",
         url: "/betting-groups/add-user",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Betting Groups"],
-            description: "Adicionar usuário em um bolão",
+            description: "[🔒 Autenticado] Adicionar usuário em um bolão",
             body: addUserToBettingGroupSchema,
+            security: [{ bearerAuth: [] }],
         },
         handler: addUserToBettingGroupController,
     });
@@ -51,12 +58,14 @@ export async function bettingGroupRoute(app: FastifyInstance) {
     publicServer.route({
         method: "GET",
         url: "/betting-groups/:idOrCode/ranking",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Betting Groups"],
-            description: "Buscar ranking de um bolão",
+            description: "[🔒 Autenticado] Buscar ranking de um bolão",
             params: z.object({
                 idOrCode: z.string(),
             }),
+            security: [{ bearerAuth: [] }],
         },
         handler: getBettingGroupRankingController,
     });
@@ -64,12 +73,14 @@ export async function bettingGroupRoute(app: FastifyInstance) {
     publicServer.route({
         method: "GET",
         url: "/betting-groups/:idOrCode/participants",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Betting Groups"],
-            description: "Buscar participantes de um bolão",
+            description: "[🔒 Autenticado] Buscar participantes de um bolão",
             params: z.object({
                 idOrCode: z.string(),
             }),
+            security: [{ bearerAuth: [] }],
         },
         handler: getBettingGroupParticipantsController,
     });

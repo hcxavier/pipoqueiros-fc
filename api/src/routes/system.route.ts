@@ -3,6 +3,7 @@ import { getActiveRound, updateActiveRound } from "../controller/system.controll
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { UpdateActiveRoundSchema } from "../types/system-types";
+import { adminMiddleware } from "../lib/auth-middleware";
 
 export async function systemRoute(app: FastifyInstance) {
     const publicServer = app.withTypeProvider<ZodTypeProvider>();
@@ -10,9 +11,11 @@ export async function systemRoute(app: FastifyInstance) {
     publicServer.route({
         method: "GET",
         url: "/system/active-round",
+        preHandler: [adminMiddleware],
         schema: {
             tags: ["System"],
-            description: "Buscar a rodada ativa",
+            description: "[🛡️ Admin Only] Buscar a rodada ativa",
+            security: [{ bearerAuth: [] }],
         },
         handler: getActiveRound,
     });
@@ -20,10 +23,12 @@ export async function systemRoute(app: FastifyInstance) {
     publicServer.route({
         method: "PATCH",
         url: "/system/active-round",
+        preHandler: [adminMiddleware],
         schema: {
             tags: ["System"],
-            description: "Atualizar a rodada ativa",
+            description: "[🛡️ Admin Only] Atualizar a rodada ativa",
             body: UpdateActiveRoundSchema,
+            security: [{ bearerAuth: [] }],
         },
         handler: updateActiveRound,
     });
