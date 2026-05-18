@@ -8,12 +8,15 @@ import { systemRoute } from "./routes/system.route";
 import { auth } from "./lib/auth";
 import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
-import { jsonSchemaTransform } from "fastify-type-provider-zod";
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import fastifyApiReference from "@scalar/fastify-api-reference";
 
 const app = Fastify({
     logger: true,
 });
+
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 app.register(cors, {
     origin: "*",
