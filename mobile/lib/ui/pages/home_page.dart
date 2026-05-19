@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/components/widgets.dart';
+import 'package:mobile/ui/pages/betting_group_detail_page.dart';
 import 'package:mobile/ui/pages/my_betting_groups_page.dart';
 import 'package:mobile/ui/pages/new_betting_group.dart';
 import 'package:mobile/ui/pages/search_betting_group.dart';
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                 const NewBettingGroupPage(),
                 const MyBettingGroupsPage(),
                 const SearchBettingGroupPage(),
-                const Placeholder(),
+                const BettingGroupDetailPage(),
               ],
             ),
             bottomNavigationBar: CustomNavigationBar(
