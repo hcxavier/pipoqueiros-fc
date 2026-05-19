@@ -78,9 +78,9 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () async => {
                                 if (await vm.login(_formKey))
                                   {
-                                    Navigator.pushNamed(
+                                    Navigator.pushReplacementNamed(
                                       context,
-                                      '/new-betting-group',
+                                      '/home',
                                     ),
                                   },
                               },

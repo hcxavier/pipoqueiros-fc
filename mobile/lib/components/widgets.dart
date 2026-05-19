@@ -4,3 +4,4 @@ export './buttons/google_button.dart';
 export 'inputs/custom_input_text.dart';
 export './custom_widgets/action_text.dart';
 export './buttons/secondary_button.dart';
+export './navigation/custom_navigation_bar.dart';
