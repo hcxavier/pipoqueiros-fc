@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/components/widgets.dart';
 import 'package:mobile/ui/pages/new_betting_group.dart';
+import 'package:mobile/ui/pages/search_betting_group.dart';
 import 'package:mobile/ui/view_models/home_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -38,16 +39,19 @@ class _HomePageState extends State<HomePage> {
             body: PageView(
               controller: _pageController,
               onPageChanged: (index) {
-                viewModel.setIndex(index); 
+                viewModel.setIndex(index);
               },
               children: [
                 const NewBettingGroupPage(),
                 const Placeholder(),
-                const Placeholder(),
+                const SearchBettingGroupPage(),
                 const Placeholder(),
               ],
             ),
-            bottomNavigationBar: CustomNavigationBar(pageController: _pageController, viewModel: viewModel)
+            bottomNavigationBar: CustomNavigationBar(
+              pageController: _pageController,
+              viewModel: viewModel,
+            ),
           );
         },
       ),

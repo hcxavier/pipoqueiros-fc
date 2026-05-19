@@ -37,3 +37,10 @@ String? nameBettingGroupValidator(String? value) {
   }
   return null;
 }
+
+String? codeBettingGroupValidator(String? value) {
+  if (value == null || value.trim().isEmpty || value.length != 6) {
+    return 'O código deve ter exatamente 6 caracteres.';
+  }
+  return null;
+}

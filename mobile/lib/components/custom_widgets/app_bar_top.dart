@@ -17,7 +17,6 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      toolbarHeight: 90.0,
       backgroundColor: AppColors.bgSecondary,
       leading: IconButton(
         icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
@@ -40,5 +39,5 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(90.0);
+  Size get preferredSize => const Size.fromHeight(80.0);
 }
