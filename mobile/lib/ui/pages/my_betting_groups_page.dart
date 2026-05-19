@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/components/cards/betting_group_participants_card.dart';
+import 'package:mobile/components/custom_widgets/avatar_stack.dart';
 import 'package:mobile/components/widgets.dart';
 import 'package:mobile/components/custom_widgets/app_bar_top.dart';
 import 'package:mobile/constants/styles.dart';
@@ -17,7 +18,6 @@ class MyBettingGroupsPage extends StatelessWidget {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: AppColors.bgPrimary,
           appBar: const PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: AppBarTop(title: 'Meus bolões'),
@@ -69,11 +69,8 @@ class MyBettingGroupsPage extends StatelessWidget {
                                   final group = vm.myGroups[index];
                                   return BettingGroupParticipantsCard(
                                     title: group['title'],
-                                    creator: group['creator'],
-                                    avatarUrls: List<String>.from(
-                                      group['avatars'],
-                                    ),
-                                    additionalCount: group['additionalCount'],
+                                    content: 'Criado por ${group['creator']}',
+                                    suffix: AvatarStack(imageUrls: group['avatars'], additionalCount: group['additionalCount']),
                                     onTap: () {},
                                   );
                                 },

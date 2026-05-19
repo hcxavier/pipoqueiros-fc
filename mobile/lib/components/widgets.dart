@@ -10,3 +10,6 @@ export './custom_widgets/avatar_stack.dart';
 export './custom_widgets/build_tab_button.dart';
 export './custom_widgets/ranking_betting_group.dart';
 export './custom_widgets/predication_betting_group.dart';
+export './avatars/avatar_icon.dart';
+export './avatars/avatar_perfil.dart';
+export './cards/betting_group_participants_card.dart';

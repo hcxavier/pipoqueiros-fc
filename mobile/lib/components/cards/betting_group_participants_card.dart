@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/components/custom_widgets/avatar_stack.dart';
 import 'package:mobile/constants/styles.dart';
 
 class BettingGroupParticipantsCard extends StatelessWidget {
   final String title;
-  final String creator;
-  final List<String> avatarUrls;
-  final int additionalCount;
-  final VoidCallback onTap;
+  final String content;
+  final Widget? prefix;
+  final Widget? suffix;
+  final VoidCallback? onTap;
 
   const BettingGroupParticipantsCard({
     super.key,
     required this.title,
-    required this.creator,
-    required this.avatarUrls,
-    this.additionalCount = 0,
-    required this.onTap,
+    required this.content,
+    this.prefix,
+    this.suffix,
+    this.onTap,
   });
 
   @override
@@ -35,6 +34,8 @@ class BettingGroupParticipantsCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            prefix ?? const SizedBox.shrink(),
+            prefix != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +50,7 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Criado por $creator',
+                    content,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 14,
@@ -58,10 +59,7 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                 ],
               ),
             ),
-            AvatarStack(
-              imageUrls: avatarUrls,
-              additionalCount: additionalCount,
-            ),
+            suffix ?? const SizedBox.shrink(),
           ],
         ),
       ),

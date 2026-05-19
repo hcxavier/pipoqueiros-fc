@@ -5,9 +5,10 @@ class SecondaryButton extends StatelessWidget {
   final String? text;
   final IconData? icon;
   final bool square;
+  final bool exit; 
   final VoidCallback? onPressed;
 
-  const SecondaryButton({super.key, this.square = false, this.text, this.icon, this.onPressed});
+  const SecondaryButton({super.key, this.square = false, this.text, this.icon, this.exit = false, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,8 @@ class SecondaryButton extends StatelessWidget {
       width: !square ? double.infinity : 60,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: AppColors.bgSecondaryButton,
-          side: BorderSide(color: AppColors.yellowPrimary, width: 1),
+          backgroundColor: !exit ? AppColors.bgSecondaryButton: AppColors.bgError,
+          side: BorderSide(color: !exit ? AppColors.yellowPrimary : AppColors.textError, width: 1),
           padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         ),
         onPressed: onPressed,

@@ -29,7 +29,6 @@ class _NewBettingGroupPageState extends State<NewBettingGroupPage> {
             builder: (context) {
               final vm = context.watch<NewBettingGroupViewModel>();
               return Scaffold(
-                backgroundColor: Colors.black,
                 appBar: const PreferredSize(
                   preferredSize: Size.fromHeight(kToolbarHeight),
                   child: AppBarTop(title: 'Criar novo bolão'),

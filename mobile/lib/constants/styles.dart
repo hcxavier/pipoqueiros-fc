@@ -64,6 +64,7 @@ class AppColors {
   static const Color bgDark = Color(0xFF1e1e1e);
   static const Color bgLight = Color(0xFF192922);
   static const Color bgSecondaryButton = Color(0xFF292619);
+  static const Color bgError = Color(0xFF291719);
 
   // Borders & Dividers
   static const Color borderPrimary = Color(0xFF323238);

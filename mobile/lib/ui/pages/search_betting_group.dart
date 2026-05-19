@@ -29,7 +29,6 @@ class _SearchBettingGroupPageState extends State<SearchBettingGroupPage> {
               final vm = context.watch<SearchBettingGroupViewModel>();
 
               return Scaffold(
-                backgroundColor: Colors.black,
                 appBar: const PreferredSize(
                   preferredSize: Size.fromHeight(kToolbarHeight),
                   child: AppBarTop(title: 'Buscar por código'),
