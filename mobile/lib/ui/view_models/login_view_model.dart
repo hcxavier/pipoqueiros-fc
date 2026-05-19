@@ -42,6 +42,9 @@ class LoginViewModel extends ChangeNotifier {
   Future<bool> register(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return false;
 
+    //Remover depois
+    return true;
+
     final response = await _authService.register(nameController.text, emailController.text, passwordController.text);
 
     if (response['success'] == true) {
