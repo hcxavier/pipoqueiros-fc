@@ -36,8 +36,11 @@ class AppFonts {
 
   static final TextStyle captionActive = GoogleFonts.roboto(
     fontSize: 14,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.yellowPrimary,
+    decoration: TextDecoration.underline,
+    decorationColor: AppColors.yellowPrimary,
+    decorationThickness: 2
   );
 
   static final TextStyle option = GoogleFonts.inter(

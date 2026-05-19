@@ -59,7 +59,7 @@ class AppThemes {
       hintStyle: AppFonts.inputText.copyWith(color: AppColors.textMuted),
       prefixIconColor: AppColors.textInput,
       suffixIconColor: AppColors.textInput,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 18),
 
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(4),
