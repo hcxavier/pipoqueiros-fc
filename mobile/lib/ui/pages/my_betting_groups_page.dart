@@ -71,7 +71,7 @@ class MyBettingGroupsPage extends StatelessWidget {
                                     title: group['title'],
                                     content: 'Criado por ${group['creator']}',
                                     suffix: AvatarStack(imageUrls: group['avatars'], additionalCount: group['additionalCount']),
-                                    onTap: () {},
+                                    onTap: () {Navigator.pushNamed(context, '/detail-betting-group');},
                                   );
                                 },
                               ),
