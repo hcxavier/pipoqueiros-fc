@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/custom_widgets/app_bar_top.dart';
 import 'package:mobile/components/custom_widgets/icons_home.dart';
 import 'package:mobile/components/widgets.dart';
 import 'package:mobile/constants/styles.dart';
@@ -29,18 +30,9 @@ class _NewBettingGroupPageState extends State<NewBettingGroupPage> {
               final vm = context.watch<NewBettingGroupViewModel>();
               return Scaffold(
                 backgroundColor: Colors.black,
-                appBar: AppBar(
-                  backgroundColor: const Color(0xFF222225),
-                  title: Text(
-                    'Criar novo bolão',
-                    style: AppFonts.titleMedium.copyWith(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                  centerTitle: true,
-                  elevation: 0,
-                  automaticallyImplyLeading: false,
+                appBar: const PreferredSize(
+                  preferredSize: Size.fromHeight(kToolbarHeight),
+                  child: AppBarTop(title: 'Criar novo bolão'),
                 ),
                 body: SafeArea(
                   child: SingleChildScrollView(
