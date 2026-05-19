@@ -6,7 +6,7 @@ class CustomInputText extends StatelessWidget {
   final String hintText;
   final bool isObscure;
   final bool isPassword;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
   final IconData? suffixIcon;
   final TextEditingController controller;
   final FormFieldValidator<String>? validator;
@@ -18,7 +18,7 @@ class CustomInputText extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.prefixIcon,
+    this.prefixIcon,
     this.suffixIcon,
     required this.keyboardType,
     this.validator,
@@ -51,7 +51,7 @@ class CustomInputText extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: Icon(prefixIcon, size: 24),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 24) : null,
         suffixIcon: _buildSuffixIcon(),
       ),
       validator: validator,

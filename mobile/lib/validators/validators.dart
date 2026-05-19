@@ -30,3 +30,10 @@ String? validateEmail(String? value) {
   }
   return null;
 }
+
+String? nameBettingGroupValidator(String? value) {
+  if (value == null || value.trim().isEmpty || value.length < 3) {
+    return 'O nome deve ter pelo menos 3 caracteres.';
+  }
+  return null;
+}

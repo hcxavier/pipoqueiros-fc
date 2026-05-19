@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppFonts {
-  
-  static final TextStyle titleLarge = GoogleFonts.atma(
-    fontSize: 32,
+  static final TextStyle titleLarge = GoogleFonts.roboto(
+    fontSize: 24,
     fontWeight: FontWeight.bold,
+    color: AppColors.textPrimary,
   );
 
   static final TextStyle titleMedium = GoogleFonts.inter(
@@ -40,7 +40,7 @@ class AppFonts {
     color: AppColors.yellowPrimary,
     decoration: TextDecoration.underline,
     decorationColor: AppColors.yellowPrimary,
-    decorationThickness: 2
+    decorationThickness: 2,
   );
 
   static final TextStyle option = GoogleFonts.inter(
