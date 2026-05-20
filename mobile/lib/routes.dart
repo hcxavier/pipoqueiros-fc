@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/ui/pages/betting_group_detail_page.dart';
-import 'package:mobile/ui/pages/home_page.dart';
+import 'package:mobile/ui/pages/splash_page.dart';
 import 'package:mobile/ui/pages/login_page.dart';
 import 'package:mobile/ui/pages/register_page.dart';
-import 'package:mobile/ui/pages/splash_page.dart';
+import 'package:mobile/ui/pages/home_page.dart';
+import 'package:mobile/ui/pages/betting_group_detail_page.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -18,7 +18,7 @@ class AppRoutes {
       login: (context) => const LoginPage(),
       home: (context) => const HomePage(),
       register: (context) => const RegisterPage(),
-      detailBettingGroup: (context) => const BettingGroupDetailPage(),
+      detailBettingGroup: (context) => const BettingGroupDetailPage(bettingGroupId: 0),
     };
   }
 }

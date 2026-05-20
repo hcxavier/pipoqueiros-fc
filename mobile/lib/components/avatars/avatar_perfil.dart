@@ -21,12 +21,28 @@ class AvatarPerfil extends StatelessWidget {
     if (name == null || name!.trim().isEmpty) {
       return '?';
     }
-
     return name!.trim()[0].toUpperCase();
   }
 
-  bool get _hasImage {
+  bool get _isAsset {
+    return _hasImagePath && imagePath!.startsWith('assets/');
+  }
+
+  bool get _hasImagePath {
     return imagePath != null && imagePath!.trim().isNotEmpty;
+  }
+
+  Widget _buildFallback() {
+    return Center(
+      child: Text(
+        _initial,
+        style: TextStyle(
+          fontSize: size * 0.38,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF2B2B2B),
+        ),
+      ),
+    );
   }
 
   @override
@@ -49,24 +65,19 @@ class AvatarPerfil extends StatelessWidget {
               color: Colors.white,
             ),
             child: ClipOval(
-              child: _hasImage
-                  ? Image.file(
-                      File(imagePath!),
-                      fit: BoxFit.cover,
-                    )
-                  : Center(
-                      child: Text(
-                        _initial,
-                        style: TextStyle(
-                          fontSize: size * 0.38,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2B2B2B),
-                        ),
-                      ),
-                    ),
+             child: _hasImagePath
+              ? (_isAsset ? Image.asset(
+                  imagePath!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                ): Image.file(
+                  File(imagePath!),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                )
+              ) : _buildFallback(),
             ),
           ),
-
           Positioned(
             top: 6,
             right: 0,

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
 class MyBettingGroupsViewModel extends ChangeNotifier {
+
+  // Controllers
   final TextEditingController searchController = TextEditingController();
+
+  // State
   bool isLoading = false;
 
   final List<Map<String, dynamic>> myGroups = [
     {
+      'id': 1,
       'title': 'Bolão do Rodrigão',
       'creator': 'Rodrigo G.',
       'avatars': [
@@ -17,6 +22,7 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
       'additionalCount': 38,
     },
     {
+      'id' : 2,
       'title': 'Bolão da Firma',
       'creator': 'Diego F.',
       'avatars': [
@@ -28,6 +34,7 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
       'additionalCount': 3,
     },
     {
+      'id': 3,
       'title': 'Família & Amigos',
       'creator': 'Joseph O.',
       'avatars': [
@@ -39,12 +46,27 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
       'additionalCount': 0,
     },
     {
+      'id': 4,
       'title': 'Um bolão recém criado',
       'creator': 'Diego F.',
       'avatars': <String>[],
       'additionalCount': 0,
     },
   ];
+
+  // Metodos
+  Future<void> searchBettingGroups(GlobalKey<FormState> formKey) async {
+    if (!formKey.currentState!.validate()) return;
+
+    isLoading = true;
+    notifyListeners();
+
+    // Simula uma busca na API
+    await Future.delayed(const Duration(seconds: 2));
+
+    isLoading = false;
+    notifyListeners();
+  }
 
   @override
   void dispose() {

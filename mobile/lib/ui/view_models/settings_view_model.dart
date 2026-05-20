@@ -12,6 +12,11 @@ class SettingsViewModel extends ChangeNotifier {
     _loadSettings();
   }
 
+  final profile = {
+    'name': 'Denilson',
+    'imagePath': 'assets/logo/logo_icon.png',
+  };
+
   Future<void> _loadSettings() async {
     final settings = await _userStorage.getSettings();
     if (settings != null && settings.themeMode != null) {
@@ -31,5 +36,17 @@ class SettingsViewModel extends ChangeNotifier {
       settings.themeMode = isDark ? 'dark' : 'light';
     }
     await _userStorage.saveSettings(settings);
+  }
+
+  Future<void> editProfile() async {
+    debugPrint('Edit profile tapped');
+  }
+
+  Future<void> support() async {
+    // Implementar lógica de suporte, como abrir um email ou chat
+  }
+
+  Future<void> rate() async {
+    // Implementar lógica de avaliação, como abrir a loja de aplicativos
   }
 }

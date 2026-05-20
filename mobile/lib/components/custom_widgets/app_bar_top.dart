@@ -18,15 +18,19 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.bgSecondary,
-      leading: IconButton(
-        icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
-        onPressed: onLeftPressed ?? () => Navigator.maybePop(context),
-      ),
+      leading: onLeftPressed != null
+          ? IconButton(
+              icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+              onPressed: onLeftPressed,
+            )
+          : null,
       actions: [
-        IconButton(
-          icon: const Icon(LucideIcons.share, color: Colors.white),
-          onPressed: onRightPressed ?? () {},
-        ),
+        onRightPressed != null
+          ? IconButton(
+              icon: const Icon(LucideIcons.share, color: Colors.white),
+              onPressed: onRightPressed,
+            )
+          : SizedBox.shrink(),
       ],
       title: Text(
         title,

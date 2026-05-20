@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/components/custom_widgets/ranking_betting_group.dart';
-import 'package:mobile/constants/styles.dart';
-import 'package:mobile/ui/view_models/betting_group_detail_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile/ui/view_models/betting_group_detail_view_model.dart';
+import 'package:mobile/constants/styles.dart';
 import 'package:mobile/components/widgets.dart';
 
 class BettingGroupDetailPage extends StatelessWidget {
-  const BettingGroupDetailPage({super.key});
+  final int bettingGroupId;
+
+  const BettingGroupDetailPage({super.key, required this.bettingGroupId});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class BettingGroupDetailPage extends StatelessWidget {
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Consumer<BettingGroupDetailViewModel>(
             builder: (context, vm, child) {
-              return AppBarTop(title: vm.groupName);
+              return AppBarTop(title: vm.groupName, onLeftPressed: () => Navigator.pop(context));
             },
           ),
         ),
@@ -30,7 +31,6 @@ class BettingGroupDetailPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 24),
-
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,29 +1,38 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile/services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   //Services
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   final AuthService _authService = AuthService();
 
   // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
 
-  // Password visibility toggle
+  // Passwords visibility toggle
   bool isObscure = true;
+  bool isObscureConfirmation = true;
+
   void togglePasswordVisibility() {
     isObscure = !isObscure;
     notifyListeners();
   }
 
+  void toggleConfirmPasswordVisibility() {
+    isObscureConfirmation = !isObscureConfirmation;
+    notifyListeners();
+  }
+
+  // Métodos de autenticação
   Future<bool> login(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return false;
 
@@ -92,5 +101,33 @@ class LoginViewModel extends ChangeNotifier {
       debugPrint('Erro ao fazer login com Google: $error');
     }
     return false;
+  }
+
+  Future<List<String>?> getLocation() async {
+    // try {
+    //   final response = await http.get(Uri.parse('https://ipapi.co/json/'));
+    //   if (response.statusCode == 200) {
+    //     final data = jsonDecode(response.body);
+    //     String city = data['city'] ?? 'Desconhecida';
+    //     String region = data['region'] ?? 'Desconhecida';
+    //     return [region, city];
+    //   } else {
+    //     debugPrint('Erro ao obter localização: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   debugPrint('Erro ao obter localização: $e');
+    // }
+    locationController.text = 'GBI, BA';
+    return ['GBI', 'BA'];
+  }
+
+  Future<bool> logout() async {
+    try {
+      await _googleSignIn.signOut();
+      return true;
+    } catch (error) {
+      debugPrint('Erro ao fazer logout: $error');
+      return false;
+    }
   }
 }

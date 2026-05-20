@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class SearchBettingGroupViewModel extends ChangeNotifier {
   final TextEditingController codeController = TextEditingController();
 
-  Future<bool> searchGroup(GlobalKey<FormState> formKey) async {
-    if (!formKey.currentState!.validate()) return false;
+  Future<int?> searchGroup(GlobalKey<FormState> formKey) async {
+    if (!formKey.currentState!.validate()) return null;
     // TODO: Implement search logic
-    return true;
+    return 1; // Replace with actual betting group ID
   }
 }

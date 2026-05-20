@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:mobile/ui/view_models/settings_view_model.dart';
-import 'package:provider/provider.dart';
-import '../../components/widgets.dart';
+import 'package:mobile/components/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Builder(
           builder: (context) {
-            final settingsVM = context.watch<SettingsViewModel>();
+            final vm = context.watch<SettingsViewModel>();
             return Scaffold(
               appBar: const PreferredSize(
                 preferredSize: Size.fromHeight(kToolbarHeight),
@@ -36,21 +36,44 @@ class _SettingsPageState extends State<SettingsPage> {
                   spacing: 6,
                   children: [
                     const SizedBox(height: 24),
-                    const AvatarPerfil(size: 148, name: 'Teste',),
+                    AvatarPerfil(
+                      size: 148,
+                      name: vm.profile['name'],
+                      imagePath: vm.profile['imagePath'],
+                      onEditTap: vm.editProfile,
+                    ),
                     const SizedBox(height: 48),
                     BettingGroupParticipantsCard(
                       title: 'Tema escuro',
                       content: 'Altere o tema do App',
                       prefix: const AvatarIcon(radius: 24, icon: LucideIcons.moon),
                       suffix: Switch(
-                        value: settingsVM.themeMode == ThemeMode.dark,
-                        onChanged: (value) => settingsVM.toggleTheme(value),
+                        value: vm.themeMode == ThemeMode.dark,
+                        onChanged: (value) => vm.toggleTheme(value),
                       ),
                     ),
-                    BettingGroupParticipantsCard(title: 'Suporte', content: 'Entre em contato com o suporte', prefix: const AvatarIcon(radius: 24, icon: LucideIcons.headphones), onTap: () => {}),
-                    BettingGroupParticipantsCard(title: 'Avaliação', content: 'Deixe a sua imprensão sobre o App', prefix: const AvatarIcon(radius: 24, icon: LucideIcons.star), onTap: () {}),
+                    BettingGroupParticipantsCard(
+                      title: 'Suporte',
+                      content: 'Entre em contato com o suporte',
+                      prefix: const AvatarIcon(radius: 24, icon: LucideIcons.headphones),
+                      onTap: vm.support,
+                    ),
+                    BettingGroupParticipantsCard(
+                      title: 'Avaliação',
+                      content: 'Deixe a sua imprensão sobre o App',
+                      prefix: const AvatarIcon(radius: 24, icon: LucideIcons.star),
+                      onTap: vm.rate
+                    ),
                     const SizedBox(height: 4),
-                    SecondaryButton(text: 'SAIR DA CONTA', icon: LucideIcons.logOut, exit: true, onPressed: () => {Navigator.pushReplacementNamed(context, '/')}),
+                    SecondaryButton(
+                      text: 'SAIR DA CONTA',
+                      icon: LucideIcons.logOut,
+                      exit: true,
+                      onPressed: () async {
+                        final logout = await context.read<LoginViewModel>().logout();
+                        if (logout) Navigator.pushReplacementNamed(context, '/');
+                      }
+                    ),
                   ],
                 ),
               ),

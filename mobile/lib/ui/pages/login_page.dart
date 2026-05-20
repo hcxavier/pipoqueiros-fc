@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:mobile/validators/validators.dart';
-import 'package:provider/provider.dart';
-import '../../components/widgets.dart';
+import 'package:mobile/components/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,12 +29,7 @@ class _LoginPageState extends State<LoginPage> {
               body: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 24.0,
-                      right: 24.0,
-                      top: 128.0,
-                      bottom: 48.0,
-                    ),
+                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 128.0, bottom: 48.0),
                     child: SvgPicture.asset(
                       'assets/logo/logo.svg',
                       width: 120,
@@ -43,9 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Expanded(
                     child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(
-                        context,
-                      ).copyWith(overscroll: false),
+                      behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
                       child: SingleChildScrollView(
                         physics: const ClampingScrollPhysics(),
                         padding: const EdgeInsets.only(
@@ -76,18 +69,18 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             PrimaryButton(
                               onPressed: () async => {
-                                if (await vm.login(_formKey))
-                                  {
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      '/home',
-                                    ),
-                                  },
+                                if (await vm.login(_formKey)) {
+                                  Navigator.pushReplacementNamed(context, '/home'),
+                                },
                               },
                               text: 'ENTRAR',
                             ),
                             GoogleButton(
-                              onPressed: vm.googleLogin,
+                              onPressed: () async => {
+                                if (await vm.googleLogin()) {
+                                  Navigator.pushReplacementNamed(context, '/home'),
+                                },
+                              },
                               text: 'ENTRAR COM GOOGLE',
                             ),
                             SizedBox(height: 12),

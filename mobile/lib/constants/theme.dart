@@ -1,4 +1,4 @@
-import 'styles.dart';
+import 'package:mobile/constants/styles.dart';
 import 'package:flutter/material.dart';
 
 class AppThemes {
