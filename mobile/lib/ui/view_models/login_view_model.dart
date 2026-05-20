@@ -1,13 +1,58 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
   
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+
+  //Services
+  final AuthService _authService = AuthService();
+
+  // Controllers
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Password visibility toggle
+  bool isObscure = true;
+  void togglePasswordVisibility() {
+    isObscure = !isObscure;
+    notifyListeners();
+  }
+
+  Future<bool> login(GlobalKey<FormState> formKey) async {
+    if (!formKey.currentState!.validate()) return false;
+
+    //Retirar depois
+    return true;
+
+    final response = await _authService.login(emailController.text, passwordController.text);
+
+    if (response['success'] == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> register(GlobalKey<FormState> formKey) async {
+    if (!formKey.currentState!.validate()) return false;
+
+    //Remover depois
+    return true;
+
+    final response = await _authService.register(nameController.text, emailController.text, passwordController.text);
+
+    if (response['success'] == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   Future<bool> googleLogin() async {
     try {
@@ -22,10 +67,11 @@ class LoginViewModel extends ChangeNotifier {
         serverClientId: serverClientId,
       );
 
+      // ignore: unnecessary_nullable_for_final_variable_declarations
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
       if (googleUser == null) return false;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
       if (idToken != null) {

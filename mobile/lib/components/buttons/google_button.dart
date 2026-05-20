@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/constants/styles.dart';
 
-class PrimaryButton extends StatelessWidget {
+class GoogleButton extends StatelessWidget {
   final String? text;
   final VoidCallback? onPressed;
-  final IconData? icon;
 
-  const PrimaryButton({super.key, this.text, this.onPressed, this.icon});
+  const GoogleButton({super.key, this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: FilledButton(
+      child: OutlinedButton(
         onPressed: onPressed,
-        child: icon == null ? Text(text ?? '') : Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: AppColors.black),
+            SvgPicture.asset('assets/logo/logo_google.svg', width: 24, height: 24),
             SizedBox(width: 10),
             Text(text ?? '', style: AppFonts.textButton),
           ],
