@@ -2,15 +2,15 @@ import z from "zod";
 
 export interface CreateMatchBody {
     round: number;
-    home_team_id: string;
-    away_team_id: string;
+    home_team_id: number;
+    away_team_id: number;
     match_date: string; // ISO date string
 }
 
 export const CreateMatchSchema = z.object({
     round: z.number(),
-    home_team_id: z.string(),
-    away_team_id: z.string(),
+    home_team_id: z.number(),
+    away_team_id: z.number(),
     match_date: z.string(),
 });
 

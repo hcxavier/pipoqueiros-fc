@@ -10,6 +10,9 @@ import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import fastifyApiReference from "@scalar/fastify-api-reference";
+import { startSyncCron } from "./crons/sync-cron";
+import { startConsolidatorCron } from "./crons/consolidator-cron";
+import { startTurnoverCron } from "./crons/turnover-cron";
 
 const app = Fastify({
     logger: true,
@@ -46,10 +49,10 @@ app.register(fastifySwagger, {
                 bearerAuth: {
                     type: "http",
                     scheme: "bearer",
-                    bearerFormat: "JWT"
-                }
-            }
-        }
+                    bearerFormat: "JWT",
+                },
+            },
+        },
     },
 
     transform: jsonSchemaTransform,
@@ -114,6 +117,10 @@ app.register(predicationRoute);
 app.register(matchRoute);
 app.register(teamRoute);
 app.register(systemRoute);
+
+startSyncCron();
+startConsolidatorCron();
+startTurnoverCron();
 
 app.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
     console.log("Server running on http://localhost:3333");

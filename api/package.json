@@ -21,11 +21,13 @@
         "dotenv": "^17.4.2",
         "fastify": "^5.8.5",
         "fastify-type-provider-zod": "^6.1.0",
+        "node-cron": "^4.2.1",
         "pg": "^8.20.0",
         "zod": "^4.4.3"
     },
     "devDependencies": {
         "@types/node": "^25.6.0",
+        "@types/node-cron": "^3.0.11",
         "@types/pg": "^8.20.0",
         "prisma": "^7.8.0",
         "tsx": "^4.21.0",
