@@ -34,7 +34,7 @@ enum ResultGuess {
 }
 
 model User {
-  id            String      @id @default(uuid())
+  id            String   @id @default(uuid())
   email         String   @unique
   name          String
   role          Role     @default(USER)
@@ -80,7 +80,7 @@ model GroupParticipant {
 
 model Team {
   id              Int     @id @default(autoincrement())
-  externalId      Int?     @unique // ID vindo da API externa (ex: 1767 pro Bahia)
+  externalId      Int?    @unique // ID vindo da API externa (ex: 1767 pro Bahia)
   name            String
   abbreviatedName String
   shieldUrl       String
@@ -112,11 +112,11 @@ model Match {
 }
 
 model Prediction {
-  id      Int            @id @default(autoincrement())
-  userId  String
-  matchId Int
+  id             Int            @id @default(autoincrement())
+  userId         String
+  matchId        Int
   bettingGroupId Int
-  type    PredictionType
+  type           PredictionType
 
   // Se for EXACT_SCORE
   homeScoreGuess Int?
@@ -186,4 +186,25 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model ScheduledTask {
+  id        String     @id @default(uuid())
+  taskName  String // ex: "SYNC_MATCHES", "TURNOVER"
+  executeAt DateTime // Quando a tarefa deve rodar
+  status    TaskStatus @default(PENDING)
+  payload   Json? // Dados dinâmicos (ex: { matchId: 10, roundId: 15 })
+  error     String? // Caso falhe, guardamos o log do erro
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([status, executeAt]) // Índice de performance crucial para buscar tarefas pendentes!
+  @@map("scheduled_tasks")
 }
