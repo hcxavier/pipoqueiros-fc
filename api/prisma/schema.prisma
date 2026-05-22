@@ -4,8 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -81,7 +80,7 @@ model GroupParticipant {
 
 model Team {
   id              Int     @id @default(autoincrement())
-  externalId      Int     @unique // ID vindo da API externa (ex: 1767 pro Bahia)
+  externalId      Int?     @unique // ID vindo da API externa (ex: 1767 pro Bahia)
   name            String
   abbreviatedName String
   shieldUrl       String
