@@ -39,8 +39,8 @@ export async function finishMatchService(matchId: number, data: FinishMatchBody)
     }
 
     // Trava de segurança: impede que a partida receba pontos em dobro
-    if (existingMatch.status === MatchStatus.FINISHED || existingMatch.pointsCalculated) {
-        throw new Error("A partida já foi encerrada ou os pontos já foram calculados.");
+    if (existingMatch.pointsCalculated) {
+        throw new Error("A partida já teve os pontos calculados.");
     }
 
     // 2. Descobre o resultado oficial na vida real
