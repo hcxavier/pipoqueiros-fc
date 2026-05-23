@@ -125,10 +125,10 @@ app.register(systemRoute);
 
 // ATENÇÃO: Chamada forçada apenas para testar e popular o banco de dados agora.
 // Numa situação real, isso só rodaria na quinta-feira de madrugada via `startSyncCron()`.
-console.log("🛠️  [DEBUG] Disparando planWeeklySetup manualmente na inicialização...");
-planWeeklySetup().then(() => {
-    console.log("🛠️  [DEBUG] Setup manual finalizado. O Maestro vai assumir daqui em diante.");
-});
+// console.log("🛠️  [DEBUG] Disparando planWeeklySetup manualmente na inicialização...");
+// planWeeklySetup().then(() => {
+//     console.log("🛠️  [DEBUG] Setup manual finalizado. O Maestro vai assumir daqui em diante.");
+// });
 
 startMaestroCron();
 
