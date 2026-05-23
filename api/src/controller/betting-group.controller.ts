@@ -24,6 +24,10 @@ export async function createBettingGroupController(request: FastifyRequest, repl
         return reply.status(201).send(new SuccessResponse(201, "Bolão criado com sucesso", bettingGroup));
     } catch (error) {
         console.error("Error creating betting group:", error);
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
+        }
+
         return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao criar o bolão"));
     }
 }
@@ -45,6 +49,10 @@ export async function findBettingGroupByCodeController(request: FastifyRequest, 
         return reply.status(200).send(new SuccessResponse(200, "Bolão encontrado", bettingGroup));
     } catch (error) {
         console.error("Error finding betting group by code:", error);
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
+        }
+
         return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao buscar o bolão"));
     }
 }

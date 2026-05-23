@@ -115,24 +115,55 @@ export async function finishMatchService(matchId: number, data: FinishMatchBody)
     };
 }
 
-export async function getCurrentRoundMatchesService() {
+export async function getCurrentRoundMatchesService(userId: string) {
     const activeRound = await getActiveRoundService();
 
     const matches = await prisma.match.findMany({
         where: {
             round: activeRound,
         },
-        include: {
-            homeTeam: true,
-            awayTeam: true,
+        select: {
+            id: true,
+            externalId: true,
+            matchDate: true,
+            status: true,
+            awayScore: true,
+            homeScore: true,
+            homeTeam: {
+                select: {
+                    id: true,
+                    externalId: true,
+                    name: true,
+                    abbreviatedName: true,
+                    shieldUrl: true,
+                },
+            },
+            awayTeam: {
+                select: {
+                    id: true,
+                    externalId: true,
+                    name: true,
+                    abbreviatedName: true,
+                    shieldUrl: true,
+                },
+            },
+            predictions: {
+                where: {
+                    userId,
+                },
+                select: {
+                    id: true,
+                    type: true,
+                    homeScoreGuess: true,
+                    awayScoreGuess: true,
+                    resultGuess: true,
+                },
+            },
         },
         orderBy: {
             matchDate: "asc",
         },
     });
 
-    return {
-        round: activeRound,
-        matches,
-    };
+    return matches;
 }
