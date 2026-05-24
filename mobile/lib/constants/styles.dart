@@ -8,19 +8,16 @@ class AppFonts {
     color: AppColors.textPrimary,
   );
 
-  static final TextStyle titleMedium = GoogleFonts.inter(
+  static final TextStyle titleMedium = GoogleFonts.roboto(
     fontSize: 22,
     fontWeight: FontWeight.bold,
+    color: AppColors.textPrimary,
   );
 
-  static final TextStyle titleSmall = GoogleFonts.inter(
+  static final TextStyle titleSmall = GoogleFonts.roboto(
     fontSize: 18,
-    fontWeight: FontWeight.w500,
-  );
-
-  static final TextStyle googleButton = GoogleFonts.inter(
-    fontSize: 16,
     fontWeight: FontWeight.bold,
+    color: AppColors.textSecondary,
   );
 
   static final TextStyle inputText = GoogleFonts.roboto(
@@ -31,6 +28,11 @@ class AppFonts {
   static final TextStyle caption = GoogleFonts.roboto(
     fontSize: 14,
     fontWeight: FontWeight.w400,
+    color: AppColors.textTertiary,
+  );
+  static final TextStyle captionBold = GoogleFonts.roboto(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
     color: AppColors.textTertiary,
   );
 
@@ -53,6 +55,12 @@ class AppFonts {
   static final TextStyle textButton = GoogleFonts.roboto(
     fontSize: 16,
     fontWeight: FontWeight.bold,
+  );
+
+  static final TextStyle time = GoogleFonts.roboto(
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: AppColors.greenPrimary,
   );
 }
 
@@ -93,6 +101,7 @@ class AppColors {
   static const Color borderInput = Color.fromARGB(255, 58, 60, 70);
 
   static const Color yellowPrimary = Color(0xFFF7DD43);
+  static const Color greenPrimary = Color(0xFF047C3F);
 
   static const Color scaffoldDarkBackgroundColor = Color(0xFF05050D);
 }

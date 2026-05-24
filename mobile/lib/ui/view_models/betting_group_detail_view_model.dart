@@ -4,6 +4,31 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
   // 0 para palpites 1 para ranking
   int selectedTabIndex = 1;
 
+  final List<Map<String, dynamic>> rankingData = [
+    {'name': 'Rodrigo G.', 'points': 100, 'avatarUrl': 'https://i.pravatar.cc/150?img=1'},
+    {'name': 'Maria S.', 'points': 90, 'avatarUrl': 'https://i.pravatar.cc/150?img=2'},
+    {'name': 'João P.', 'points': 80, 'avatarUrl': 'https://i.pravatar.cc/150?img=3'},
+    {'name': 'Ana L.', 'points': 70, 'avatarUrl': 'https://i.pravatar.cc/150?img=4'},
+  ];
+
+  final List<Map<String, dynamic>> predications = [
+    {
+      'match': 'Bahia vs. Vitória', 
+      'status': 'SCHEDULED',
+      'type': 'EXACT_SCORE',
+      'homeTeam': 'BAH',
+      'awayTeam': 'VIT',
+      'homeScore': 2,
+      'awayScore': 1,
+      'homeScorePrediction': 2,
+      'awayScorePrediction': 1, 
+      'resultGuess': 'NULLED', 
+      'time': '* 42\'',
+      'isOpined': true,
+    },
+
+  ];
+
   final String groupName = "Bolão do Rodrigão";
   final String creatorName = "Rodrigo G.";
   final List<String> avatars = [

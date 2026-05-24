@@ -14,3 +14,6 @@ export 'package:mobile/components/avatars/avatar_icon.dart';
 export 'package:mobile/components/avatars/avatar_perfil.dart';
 export 'package:mobile/components/cards/betting_group_participants_card.dart';
 export 'package:mobile/components/custom_widgets/icons_home.dart';
+export 'package:mobile/components/buttons/switch_tab.dart';
+export 'package:mobile/components/custom_widgets/ranking_index.dart';
+export 'package:mobile/components/cards/predication.dart';

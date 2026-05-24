@@ -39,70 +39,31 @@ class BettingGroupDetailPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                vm.groupName,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              Text(vm.groupName, style: AppFonts.titleMedium),
                               const SizedBox(height: 4),
-                              Text(
-                                'Criado por ${vm.creatorName}',
-                                style: TextStyle(
-                                  color: Colors
-                                      .grey[400], // ou AppColors.textSecondary se tiver
-                                  fontSize: 14,
-                                ),
-                              ),
+                              Text('Criado por ${vm.creatorName}', style: AppFonts.caption,),
                             ],
                           ),
                         ),
-
                         AvatarStack(
                           imageUrls: vm.avatars,
                           additionalCount: vm.additionalCount,
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-                    const Divider(color: AppColors.bgTertiary, thickness: 1),
-
+                    const Divider(thickness: 1),
                     const SizedBox(height: 16),
-
-                    // Toggle Tabs (Seus palpites / Ranking)
-                    Container(
-                      height: 50,
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgSecondary,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        children: [
-                          BuildTabButton(
-                            title: 'Seus palpites',
-                            isSelected: vm.selectedTabIndex == 0,
-                            onTap: () => vm.setTab(0),
-                          ),
-                          BuildTabButton(
-                            title: 'Ranking do grupo',
-                            isSelected: vm.selectedTabIndex == 1,
-                            onTap: () => vm.setTab(1),
-                          ),
-                        ],
-                      ),
+                    SwitchTab(
+                      selectedTabIndex: vm.selectedTabIndex,
+                      onTabSelected: vm.setTab,
+                      tabTitles: ['Seus palpites', 'Ranking do grupo'],
                     ),
-
-                    const SizedBox(height: 48),
-
-                    // Conteúdo dinâmico baseado na aba selecionada
+                    const SizedBox(height: 24),
                     Expanded(
                       child: vm.selectedTabIndex == 1
-                          ? RankingBettingGroup()
-                          : PredicationBettingGroup(),
+                          ? RankingBettingGroup(rankingData: vm.rankingData)
+                          : PredicationBettingGroup(predications: vm.predications),
                     ),
                   ],
                 ),
