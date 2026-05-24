@@ -25,9 +25,10 @@ class CustomNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildNavItem(LucideIcons.plusCircle, 0, "Novo bolão", viewModel),
-            _buildNavItem(Icons.sports_soccer, 1, "Meus bolões", viewModel),
-            _buildNavItem(LucideIcons.search, 2, "Buscar bolões", viewModel),
-            _buildNavItem(LucideIcons.settings, 3, "Configurações", viewModel),
+            _buildNavItem(LucideIcons.trophy, 1, "Ranking", viewModel),
+            _buildNavItem(Icons.sports_soccer, 2, "Meus bolões", viewModel),
+            _buildNavItem(LucideIcons.search, 3, "Buscar bolões", viewModel),
+            _buildNavItem(LucideIcons.settings, 4, "Configurações", viewModel),
           ],
         ),
       ),
