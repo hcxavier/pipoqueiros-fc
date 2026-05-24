@@ -18,6 +18,7 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.bgSecondary,
+      scrolledUnderElevation: 0,
       leading: onLeftPressed != null
           ? IconButton(
               icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),

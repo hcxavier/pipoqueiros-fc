@@ -40,9 +40,9 @@ class _RankingPageState extends State<RankingPage> {
                       const SizedBox(height: 12),
                       Expanded(
                         child: switch (vm.selectedTabIndex) {
-                          0 => Container(color: Colors.amber,),
-                          1 => Container(color: Colors.blue,),
-                          2 => Container(color: Colors.green,),
+                          0 => RankingBettingGroup(rankingData: vm.cityRanking),
+                          1 => RankingBettingGroup(rankingData: vm.stateRanking),
+                          2 => RankingBettingGroup(rankingData: vm.nationalRanking),
                           _ => Container(),
                         },
                       ),
