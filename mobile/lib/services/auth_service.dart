@@ -155,13 +155,34 @@ class AuthService {
     return false;
   }
 
+  Future<Map<String, dynamic>> getSession() async {
+    try {
+      final response = await _api.get('/api/auth/get-session');
+
+      if (response.statusCode == 200 && response.data != null) {
+        // Se a API retonar a sessão validada, salvamos o novo token refrescado
+        if (response.data['session'] != null &&
+            response.data['session']['token'] != null) {
+          await _userStorage.saveTokens(response.data['session']['token']);
+        }
+        return {'success': true, 'data': response.data};
+      }
+    } catch (e) {
+      print('Get Session Error: $e');
+    }
+    return {'success': false};
+  }
+
   Future<bool> logout() async {
     try {
-      final response = await _api.post('/auth/logout');
-      return response.statusCode == 200;
+      // Tenta invalidar a sessão no backend (ignora erros caso o backend não suporte)
+      await _api.post('/api/auth/sign-out');
     } catch (e) {
-      print('Logout Error: $e');
-      return false;
+      print('Logout API Error: $e');
+    } finally {
+      // É essencial garantir que o token local seja sempre apagado no encerramento
+      await _userStorage.deleteTokens();
     }
+    return true;
   }
 }

@@ -11,12 +11,15 @@ class SplashViewModel extends ChangeNotifier {
     final token = await _userStorage.getAccessToken() ?? '';
 
     if (token.isNotEmpty) {
-      // final response = await _authService.refreshToken();
+      final response = await _authService.getSession();
 
-      // if (response['success'] == true) {
-      //   return true;
-      // }
+      if (response['success'] == true) {
+        return true; // Vai para HOME
+      } else {
+        await _userStorage.deleteTokens();
+      }
     }
+
     return false;
   }
 }

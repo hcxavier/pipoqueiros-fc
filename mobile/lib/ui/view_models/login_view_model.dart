@@ -152,10 +152,26 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<bool> logout() async {
     try {
-      await _googleSignIn.signOut();
+      isLoading = true;
+      notifyListeners();
+
+      // Limpa no sistema (API + armazenamento locial)
+      await _authService.logout();
+
+      // Desloga o google SignIn
+      try {
+        await _googleSignIn.signOut();
+      } catch (e) {
+        debugPrint('Sem sessão no google para deslogar');
+      }
+
+      isLoading = false;
+      notifyListeners();
       return true;
     } catch (error) {
       debugPrint('Erro ao fazer logout: $error');
+      isLoading = false;
+      notifyListeners();
       return false;
     }
   }

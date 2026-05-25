@@ -13,7 +13,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -46,7 +45,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     BettingGroupParticipantsCard(
                       title: 'Tema escuro',
                       content: 'Altere o tema do App',
-                      prefix: const AvatarIcon(radius: 24, icon: LucideIcons.moon),
+                      prefix: const AvatarIcon(
+                        radius: 24,
+                        icon: LucideIcons.moon,
+                      ),
                       suffix: Switch(
                         value: vm.themeMode == ThemeMode.dark,
                         onChanged: (value) => vm.toggleTheme(value),
@@ -55,14 +57,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     BettingGroupParticipantsCard(
                       title: 'Suporte',
                       content: 'Entre em contato com o suporte',
-                      prefix: const AvatarIcon(radius: 24, icon: LucideIcons.headphones),
+                      prefix: const AvatarIcon(
+                        radius: 24,
+                        icon: LucideIcons.headphones,
+                      ),
                       onTap: vm.support,
                     ),
                     BettingGroupParticipantsCard(
                       title: 'Avaliação',
                       content: 'Deixe a sua imprensão sobre o App',
-                      prefix: const AvatarIcon(radius: 24, icon: LucideIcons.star),
-                      onTap: vm.rate
+                      prefix: const AvatarIcon(
+                        radius: 24,
+                        icon: LucideIcons.star,
+                      ),
+                      onTap: vm.rate,
                     ),
                     const SizedBox(height: 4),
                     SecondaryButton(
@@ -70,9 +78,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: LucideIcons.logOut,
                       exit: true,
                       onPressed: () async {
-                        final logout = await context.read<LoginViewModel>().logout();
-                        if (logout) Navigator.pushReplacementNamed(context, '/');
-                      }
+                        final logout = await context
+                            .read<LoginViewModel>()
+                            .logout();
+                        if (logout && context.mounted) {
+                          // Usa pushNamedAndRemoveUntil para limpar todo o histórico e não permitir voltar na seta
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/',
+                            (route) => false,
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
