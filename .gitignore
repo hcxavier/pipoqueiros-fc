@@ -14,3 +14,5 @@ mobile/pubspec.lock
 # api
 api/generated/
 api/.env
+
+.antigravitycli/

@@ -11,6 +11,12 @@ class BettingGroupDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int resolvedId = bettingGroupId;
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+    if (routeArgs is int) {
+      resolvedId = routeArgs;
+    }
+
     return ChangeNotifierProvider(
       create: (context) => BettingGroupDetailViewModel(),
       child: Scaffold(

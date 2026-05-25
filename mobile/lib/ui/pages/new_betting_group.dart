@@ -60,10 +60,14 @@ class _NewBettingGroupPageState extends State<NewBettingGroupPage> {
                             text: 'CRIAR MEU BOLÃO',
                             isLoading: vm.isLoading,
                             onPressed: () async {
-                              final bettingGroupId = await vm.createGroup(_formKey);
-                              if (bettingGroupId != null) {
-                                Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
+                              if (!_formKey.currentState!.validate()) {
+                                return;
                               }
+                              final bettingGroupId = await vm.createGroup();
+                              if (bettingGroupId == null) {
+                                return;
+                              }
+                              Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
                             },
                           ),
                           const SizedBox(height: 32),
