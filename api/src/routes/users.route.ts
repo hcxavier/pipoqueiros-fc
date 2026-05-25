@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { getAddressUser, userFindById } from "../controller/user.controller";
+import { getUserBettingGroupsController } from "../controller/betting-group.controller";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { authMiddleware } from "../lib/auth-middleware";
@@ -50,4 +51,52 @@ export async function usersRoute(app: FastifyInstance) {
         },
         handler: userFindById,
     });
+
+    publicServer.route({
+        method: "GET",
+        url: "/users/:id/betting-groups",
+        preHandler: [authMiddleware],
+        schema: {
+            tags: ["Users"],
+            description: "[🔒 Autenticado] Buscar bolões de um usuário específico",
+            params: z.object({
+                id: z.string(),
+            }),
+            security: [{ bearerAuth: [] }],
+            response: {
+                200: z.object({
+                    code: z.number(),
+                    message: z.string(),
+                    data: z.array(
+                        z.object({
+                            id: z.number(),
+                            name: z.string(),
+                            code: z.string(),
+                            createdAt: z.date(),
+                            creator: z.object({
+                                id: z.string(),
+                                name: z.string(),
+                                image: z.string().nullable(),
+                            }),
+                            participants: z.array(
+                                z.object({
+                                    score: z.number(),
+                                    user: z.object({
+                                        id: z.string(),
+                                        name: z.string(),
+                                        image: z.string().nullable(),
+                                    }),
+                                })
+                            ),
+                        })
+                    ),
+                }),
+                400: errorResponseSchema,
+                404: errorResponseSchema,
+                500: errorResponseSchema,
+            },
+        },
+        handler: getUserBettingGroupsController,
+    });
 }
+
