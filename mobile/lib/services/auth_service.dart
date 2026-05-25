@@ -10,7 +10,7 @@ class AuthService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await _api.post(
-        '/auth/login',
+        '/api/auth/sign-in/email',
         data: {'email': email, 'password': password},
       );
       if (response.statusCode == 200) {
@@ -19,12 +19,31 @@ class AuthService {
       }
     } on DioException catch (e) {
       // Captura o erro da API para ver o motivo da recusa
+      print(e);
       print('Login Falhou - Status: ${e.response?.statusCode}');
       print('Detalhes: ${e.response?.data}');
+
+      String errorMessage = 'Não foi possível conectar ao servidor.';
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response?.data is Map) {
+        if (e.response?.data['code'] == 'INVALID_EMAIL_OR_PASSWORD') {
+          errorMessage = "Email ou senha inválidos.";
+        } else {
+          errorMessage =
+              e.response?.data['message'] ??
+              'Falha ao autenticar, tente novamente.';
+        }
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'Servidor indisponível. Tente novamente mais tarde.';
+      }
+
+      return {'success': false, 'message': errorMessage};
     } catch (e) {
       print('Login Error: $e');
+      return {'success': false, 'message': 'Ocorreu um erro inesperado.'};
     }
-    return {'success': false};
+    return {'success': false, 'message': 'Houve um problema.'};
   }
 
   Future<Map<String, dynamic>> register(

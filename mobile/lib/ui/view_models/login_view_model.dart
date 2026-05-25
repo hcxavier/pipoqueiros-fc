@@ -15,6 +15,10 @@ class LoginViewModel extends ChangeNotifier {
       TextEditingController();
   final TextEditingController locationController = TextEditingController();
 
+  // State
+  String? errorMessage;
+  bool isLoading = false;
+
   // Passwords visibility toggle
   bool isObscure = true;
   bool isObscureConfirmation = true;
@@ -31,28 +35,35 @@ class LoginViewModel extends ChangeNotifier {
 
   // Métodos de autenticação
   Future<bool> login(GlobalKey<FormState> formKey) async {
-    if (!formKey.currentState!.validate()) return false;
+    errorMessage = null;
+    isLoading = true;
+    notifyListeners();
 
-    //Retirar depois
-    return true;
+    if (!formKey.currentState!.validate()) {
+      isLoading = false;
+      notifyListeners();
+      return false;
+    }
 
     final response = await _authService.login(
       emailController.text,
       passwordController.text,
     );
 
+    isLoading = false;
     if (response['success'] == true) {
+      notifyListeners();
       return true;
     } else {
+      errorMessage =
+          response['message'] ?? 'Falha ao autenticar, tente novamente.';
+      notifyListeners();
       return false;
     }
   }
 
   Future<bool> register(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return false;
-
-    //Remover depois
-    return true;
 
     final response = await _authService.register(
       nameController.text,
