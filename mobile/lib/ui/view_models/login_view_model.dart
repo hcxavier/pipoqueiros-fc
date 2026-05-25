@@ -18,6 +18,8 @@ class LoginViewModel extends ChangeNotifier {
   // State
   String? errorMessage;
   bool isLoading = false;
+  String? locationCity;
+  String? locationState;
 
   // Passwords visibility toggle
   bool isObscure = true;
@@ -63,17 +65,32 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<bool> register(GlobalKey<FormState> formKey) async {
-    if (!formKey.currentState!.validate()) return false;
+    errorMessage = null;
+    isLoading = true;
+    notifyListeners();
+
+    if (!formKey.currentState!.validate()) {
+      isLoading = false;
+      notifyListeners();
+      return false;
+    }
 
     final response = await _authService.register(
       nameController.text,
       emailController.text,
       passwordController.text,
+      locationCity,
+      locationState,
     );
 
+    isLoading = false;
     if (response['success'] == true) {
+      notifyListeners();
       return true;
     } else {
+      errorMessage =
+          response['message'] ?? 'Falha ao cadastrar, tente novamente.';
+      notifyListeners();
       return false;
     }
   }
@@ -106,22 +123,31 @@ class LoginViewModel extends ChangeNotifier {
     return false;
   }
 
-  Future<List<String>?> getLocation() async {
-    // try {
-    //   final response = await http.get(Uri.parse('https://ipapi.co/json/'));
-    //   if (response.statusCode == 200) {
-    //     final data = jsonDecode(response.body);
-    //     String city = data['city'] ?? 'Desconhecida';
-    //     String region = data['region'] ?? 'Desconhecida';
-    //     return [region, city];
-    //   } else {
-    //     debugPrint('Erro ao obter localização: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   debugPrint('Erro ao obter localização: $e');
-    // }
-    locationController.text = 'GBI, BA';
-    return ['GBI', 'BA'];
+  bool isLocationLoading = false;
+
+  Future<void> getLocation() async {
+    errorMessage = null;
+    isLocationLoading = true;
+    notifyListeners();
+
+    final response = await _authService.getAddressForm();
+    print(response);
+
+    isLocationLoading = false;
+
+    if (response['success'] == true && response['data'] != null) {
+      final data = response['data']['data'];
+      String cidade = data['city'] ?? 'Desconhecida';
+      String estado = data['state'] ?? 'Desconhecida';
+      locationController.text = '$cidade, $estado';
+      locationCity = cidade;
+      locationState = estado;
+    } else {
+      errorMessage =
+          response['message'] ?? 'Não foi possível obter a localização.';
+    }
+
+    notifyListeners();
   }
 
   Future<bool> logout() async {

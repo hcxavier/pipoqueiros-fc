@@ -28,6 +28,11 @@
 	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Este aplicativo precisa de acesso à localização para funcionar corretamente.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Este aplicativo precisa de acesso à localização em segundo plano.</string>
+
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>

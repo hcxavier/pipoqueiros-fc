@@ -45,6 +45,7 @@ dependencies:
     dio: ^5.9.2
     flutter_svg: ^2.3.0
     lucide_icons: ^0.257.0
+    geolocator: ^14.0.1
 
 dev_dependencies:
     flutter_test:
