@@ -1,2 +1,16 @@
 .env
 /mobile
+
+
+# Flutter ignores
+build/
+mobile/android/app/google-services.json
+mobile/windows/*
+mobile/linux/*
+mobile/macos/*
+mobile/web/*
+mobile/pubspec.lock
+
+# api
+api/generated/
+api/.env
