@@ -1,8 +1,8 @@
+import { AppError } from "../errors/app-error"; // Atualize o caminho se necessário
 import generateCodeBettingGroup from "../helpers/generate-code-betting-group";
 import { prisma } from "../lib/prisma";
-import { addUserToBettingGroupParams, createBettingGroupParams } from "../types/betting-group-types";
 
-export async function createBettingGroupService(data: createBettingGroupParams) {
+export async function createBettingGroupService(name: string, creatorId: string) {
     const codeGenerated = generateCodeBettingGroup();
 
     const codeIsExists = await prisma.bettingGroup.findUnique({
@@ -11,19 +11,20 @@ export async function createBettingGroupService(data: createBettingGroupParams) 
     });
 
     if (codeIsExists) {
-        return createBettingGroupService(data);
+        return createBettingGroupService(name, creatorId);
     }
 
     const BettingGroupCreated = await prisma.bettingGroup.create({
         data: {
-            ...data,
+            name: name,
             code: codeGenerated,
+            creatorId,
         },
     });
 
     await prisma.groupParticipant.create({
         data: {
-            userId: data.creatorId,
+            userId: creatorId,
             bettingGroupId: BettingGroupCreated.id,
         },
     });
@@ -37,15 +38,15 @@ export async function findBettingGroupByCodeService(code: string) {
         select: {
             id: true,
             name: true,
+            creator: {
+                select: { name: true },
+            },
             participants: {
                 select: {
                     user: {
-                        select: { name: true },
+                        select: { name: true, image: true },
                     },
                 },
-            },
-            creator: {
-                select: { name: true },
             },
         },
     });
@@ -53,45 +54,45 @@ export async function findBettingGroupByCodeService(code: string) {
     return bettingGroup;
 }
 
-export async function addUserToBettingGroupService(data: addUserToBettingGroupParams) {
+export async function addUserToBettingGroupService(userId: string, bettingGroupCode: string) {
     const bettingGroup = await prisma.bettingGroup.findFirst({
         where: {
-            OR: [{ id: data.bettingGroupId }, { code: data.bettingGroupId }],
+            code: bettingGroupCode,
         },
     });
 
     if (!bettingGroup) {
-        throw new Error("Betting group not found");
+        throw new AppError("Bolão com este código não encontrado", 404);
     }
 
     const userAlreadyInBettingGroup = await prisma.groupParticipant.findFirst({
         where: {
-            userId: data.userId,
+            userId: userId,
             bettingGroupId: bettingGroup.id,
         },
     });
 
     if (userAlreadyInBettingGroup) {
-        throw new Error("User already in betting group");
+        throw new AppError("Usuário já está no bolão", 409);
     }
 
     await prisma.groupParticipant.create({
         data: {
-            userId: data.userId,
+            userId: userId,
             bettingGroupId: bettingGroup.id,
         },
     });
 }
 
-export async function getBettingGroupRankingService(idOrCode: string) {
+export async function getBettingGroupRankingService(code: string) {
     const bettingGroup = await prisma.bettingGroup.findFirst({
         where: {
-            OR: [{ id: idOrCode }, { code: idOrCode }],
+            code,
         },
     });
 
     if (!bettingGroup) {
-        throw new Error("Betting group not found");
+        throw new AppError("Bolão não encontrado", 404);
     }
 
     const ranking = await prisma.groupParticipant.findMany({
@@ -103,52 +104,14 @@ export async function getBettingGroupRankingService(idOrCode: string) {
             user: {
                 select: {
                     name: true,
+                    image: true,
                 },
             },
         },
         orderBy: {
-            score: 'desc',
+            score: "desc",
         },
     });
 
-    return ranking.map(participant => ({
-        name: participant.user.name,
-        score: participant.score,
-    }));
-}
-
-export async function getBettingGroupParticipantsService(idOrCode: string) {
-    const bettingGroup = await prisma.bettingGroup.findFirst({
-        where: {
-            OR: [{ id: idOrCode }, { code: idOrCode }],
-        },
-    });
-
-    if (!bettingGroup) {
-        throw new Error("Betting group not found");
-    }
-
-    const participants = await prisma.groupParticipant.findMany({
-        where: {
-            bettingGroupId: bettingGroup.id,
-        },
-        select: {
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-        },
-        orderBy: {
-            user: {
-                name: 'asc',
-            },
-        },
-    });
-
-    return participants.map(participant => ({
-        id: participant.user.id,
-        name: participant.user.name,
-    }));
+    return ranking;
 }
