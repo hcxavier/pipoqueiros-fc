@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mobile/services/api_service.dart';
 
 class AuthService {
@@ -8,35 +9,33 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _api.post('/auth/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+      final response = await _api.post(
+        '/auth/login',
+        data: {'email': email, 'password': password},
       );
       if (response.statusCode == 200) {
         response.data['success'] = true;
         return response.data;
       }
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       // Captura o erro da API para ver o motivo da recusa
       print('Login Falhou - Status: ${e.response?.statusCode}');
       print('Detalhes: ${e.response?.data}');
     } catch (e) {
       print('Login Error: $e');
-      
     }
     return {'success': false};
   }
 
-  Future<Map<String, dynamic>> register(String name, String email, String password) async {
+  Future<Map<String, dynamic>> register(
+    String name,
+    String email,
+    String password,
+  ) async {
     try {
-      final response = await _api.post('/auth/register',
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-        },
+      final response = await _api.post(
+        '/auth/register',
+        data: {'name': name, 'email': email, 'password': password},
       );
       if (response.statusCode == 201) {
         response.data['success'] = true;
@@ -48,30 +47,25 @@ class AuthService {
     return {'success': false};
   }
 
-  Future<Map<String, dynamic>> googleLogin(String idToken) async {
+  Future<bool> googleLogin(String idToken) async {
     try {
-      final response = await _api.post('/auth/google',
+      final response = await _api.post(
+        '/auth/sign-in/social',
         data: {
-          'idToken': idToken,
+          'provider': 'google',
+          'idToken': {'token': idToken},
         },
       );
+
       if (response.statusCode == 200) {
-        response.data['success'] = true;
-        return response.data;
+        return true;
+      } else {
+        return false;
       }
-    } catch (e) {
-      print('Google Login Error: $e');
+    } catch (error) {
+      debugPrint('Google Login Error: $error');
     }
-    return {'success': false};
-  }
-
-  Future<Map<String, dynamic>> refreshToken() async{
-    final response = await _api.refresh();
-
-    if (response) {
-      return {'success': true};
-    }
-    return {'success': false};
+    return false;
   }
 
   Future<bool> logout() async {
