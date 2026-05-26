@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/constants/styles.dart';
 
+import 'package:provider/provider.dart';
+import 'package:mobile/ui/view_models/settings_view_model.dart';
+
 class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onLeftPressed;
@@ -16,6 +19,7 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsViewModel>();
     return AppBar(
       backgroundColor: AppColors.bgSecondary,
       scrolledUnderElevation: 0,

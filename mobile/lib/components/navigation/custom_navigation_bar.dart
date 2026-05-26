@@ -3,6 +3,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/constants/styles.dart';
 import 'package:mobile/ui/view_models/home_view_model.dart';
 
+import 'package:provider/provider.dart';
+import 'package:mobile/ui/view_models/settings_view_model.dart';
+
 class CustomNavigationBar extends StatelessWidget {
   final PageController pageController;
   final HomeViewModel viewModel;
@@ -11,6 +14,7 @@ class CustomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsViewModel>();
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(12),
