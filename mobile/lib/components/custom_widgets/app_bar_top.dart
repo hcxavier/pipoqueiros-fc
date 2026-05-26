@@ -21,21 +21,21 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       leading: onLeftPressed != null
           ? IconButton(
-              icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+              icon: Icon(LucideIcons.chevronLeft, color: AppColors.textPrimary),
               onPressed: onLeftPressed,
             )
           : null,
       actions: [
         onRightPressed != null
           ? IconButton(
-              icon: const Icon(LucideIcons.share, color: Colors.white),
+              icon: Icon(LucideIcons.share, color: AppColors.textPrimary),
               onPressed: onRightPressed,
             )
           : SizedBox.shrink(),
       ],
       title: Text(
         title,
-        style: AppFonts.titleMedium.copyWith(color: Colors.white, fontSize: 18),
+        style: AppFonts.titleMedium.copyWith(color: AppColors.textPrimary, fontSize: 18),
       ),
       centerTitle: true,
       elevation: 0,

@@ -57,9 +57,15 @@ class CustomNavigationBar extends StatelessWidget {
               color: isSelected ? AppColors.yellowPrimary : AppColors.textMuted,
               size: 24,
             ),
-            ?isSelected ? SizedBox(width: 8) : null,
-            ?isSelected ? Text(sessionName, style: AppFonts.caption.copyWith(color: isSelected ? AppColors.yellowPrimary : AppColors.textMuted),
-            ) : null,
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                sessionName,
+                style: AppFonts.caption.copyWith(
+                  color: isSelected ? AppColors.yellowPrimary : AppColors.textMuted,
+                ),
+              ),
+            ],
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/constants/styles.dart';
 import 'package:mobile/constants/theme.dart';
 import 'package:mobile/routes.dart';
 import 'package:mobile/ui/view_models/settings_view_model.dart';
@@ -13,6 +14,11 @@ class MyApp extends StatelessWidget {
       create: (context) => SettingsViewModel(),
       child: Consumer<SettingsViewModel>(
         builder: (context, settingsVM, child) {
+          final isDark = settingsVM.themeMode == ThemeMode.system
+              ? MediaQuery.of(context).platformBrightness == Brightness.dark
+              : settingsVM.themeMode == ThemeMode.dark;
+          AppColors.isDark = isDark;
+
           return MaterialApp(
             title: 'Pipoqueiros FC',
             theme: AppThemes.lightTheme,

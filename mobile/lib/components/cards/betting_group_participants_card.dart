@@ -42,8 +42,8 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -52,7 +52,7 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                   Text(
                     content,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.textSecondary.withValues(alpha: 0.6),
                       fontSize: 14,
                     ),
                   ),
