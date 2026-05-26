@@ -76,4 +76,20 @@ class BettingGroupService {
     }
     return [];
   }
+
+  Future<bool> joinBettingGroup(String groupCode) async {
+    try {
+      final response = await _api.post('/betting-groups/add-user', 
+        data: {'bettingGroupCode': groupCode}
+      );
+
+      return response.statusCode == 200;
+      
+    } on DioException catch (e) {
+      print('Erro ao entrar no bolão: ${e.message}');
+    } catch (e) {
+      print('Erro inesperado ao entrar no bolão: $e');
+    }
+    return false;
+  }
 }

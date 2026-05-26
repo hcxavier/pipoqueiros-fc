@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/ui/pages/qrScanner.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/ui/view_models/search_betting_group_view_model.dart';
@@ -65,23 +66,7 @@ class _SearchBettingGroupPageState extends State<SearchBettingGroupPage> {
                                   onPressed: () async {
                                     final bettingGroupId = await vm.searchGroup(_formKey);
                                     if (bettingGroupId != null) {
-                                      Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
-                                    } else {
-                                      final screenHeight = MediaQuery.of(context).size.height;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: const Text('Bolão não encontrado'),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: EdgeInsets.only(
-                                            bottom: screenHeight - 250,
-                                            left: 16,
-                                            right: 16,
-                                          ),
-                                          padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 24),
-                                          dismissDirection: DismissDirection.up,
-                                          elevation: 0,
-                                        ),
-                                      );
+                                      Navigator.pushNamed(context, '/detail-betting-group', arguments: vm.codeController.text.trim().toUpperCase());
                                     }
                                   },
                                 ),
@@ -90,7 +75,29 @@ class _SearchBettingGroupPageState extends State<SearchBettingGroupPage> {
                               SecondaryButton(
                                 square: true,
                                 icon: LucideIcons.qrCode,
-                                onPressed: () {}, // Implementar funcionalidade de leitura de QR Code
+                                onPressed: () async {
+                                  // 1. Navega para a tela do leitor de QR Code e aguarda um retorno
+                                  final String? qrCodeResult = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      // Troque 'QrScannerScreen' pelo nome exato da classe da sua tela de leitura
+                                      builder: (context) => const QrScannerScreen(), 
+                                    ),
+                                  );
+
+                                  // 2. Se a leitura não for nula (ou seja, o usuário leu um código em vez de só voltar)
+                                  if (qrCodeResult != null && qrCodeResult.isNotEmpty) {
+                                    // Preenche o campo de texto com o código lido
+                                    vm.codeController.text = qrCodeResult;
+                                    
+                                    // Opcional: Se quiser que ele já tente buscar automaticamente após ler o QR Code, 
+                                    // basta chamar o método de busca aqui mesmo:
+                                    // final bettingGroupId = await vm.searchGroup(_formKey);
+                                    // if (bettingGroupId != null) {
+                                    //   Navigator.pushNamed(context, '/detail-betting-group', arguments: vm.codeController.text.trim().toUpperCase());
+                                    // }
+                                  }
+                                },
                               ),
                             ],
                           ),
