@@ -10,6 +10,8 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> _allGroups = [];
   List<Map<String, dynamic>> myGroups = [];
 
+  bool _isDisposed = false;
+
   MyBettingGroupsViewModel() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadUserGroups();
@@ -20,6 +22,9 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     final apiGroups = await _bettingGroupService.getUserBettingGroups();
+
+    if (_isDisposed) return;
+
     if (apiGroups != null) {
       _allGroups = apiGroups
           .where((g) => g != null)
@@ -95,6 +100,7 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     searchController.dispose();
     super.dispose();
   }
