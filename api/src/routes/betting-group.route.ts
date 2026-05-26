@@ -119,7 +119,9 @@ export async function bettingGroupRoute(app: FastifyInstance) {
             security: [{ bearerAuth: [] }],
             response: {
                 200: z.object({
-                    ranking: z.array(
+                    code: z.number(),
+                    message: z.string(),
+                    data: z.array(
                         z.object({
                             user: z.object({
                                 name: z.string(),
