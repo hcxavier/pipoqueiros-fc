@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/rendering.dart';
-import 'package:mobile/lib/geolocator.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/storages/user_storage.dart';
@@ -106,6 +105,31 @@ class AuthService {
       return {'success': false, 'message': 'Ocorreu um erro inesperado.'};
     }
     return {'success': false, 'message': 'Houve um problema.'};
+  }
+
+  Future<Position> obterLocalizacaoAtual() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Os serviços de localização estão desativados.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('As permissões de localização foram negadas.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'As permissões de localização estão permanentemente negadas.');
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 
   Future<Map<String, dynamic>> getAddressForm() async {

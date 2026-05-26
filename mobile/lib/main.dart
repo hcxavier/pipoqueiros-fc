@@ -14,7 +14,7 @@ Future<void> main() async {
   final userStorage = UserStorage();
   final token = await userStorage.getAccessToken();
   if (token == null) {
-    await userStorage.saveTokens('dev-token-xyz', 'dev-refresh-xyz');
+    await userStorage.saveTokens('dev-token-xyz');
   }
   
   runApp(const MyApp());
