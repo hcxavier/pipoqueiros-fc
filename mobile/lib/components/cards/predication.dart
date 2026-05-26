@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:mobile/components/custom_widgets/option_win.dart';
+import 'package:mobile/components/widgets.dart';
 import 'package:mobile/constants/styles.dart';
 
 enum TypePredicationEnum {
@@ -30,7 +32,7 @@ enum ResultGuessEnum {
   const ResultGuessEnum(this.value);
 }
 
-class Predication extends StatelessWidget {
+class Predication extends StatefulWidget {
   final String? time;
   final String match;
   final MatchStatus matchStatus;
@@ -44,7 +46,7 @@ class Predication extends StatelessWidget {
   final ResultGuessEnum resultGuess;
   final bool isOpined;
   final Widget? opined;
-  final VoidCallback? onTap;
+  final void Function(ResultGuessEnum)? onOpinar;
 
   const Predication({
     super.key,
@@ -54,7 +56,7 @@ class Predication extends StatelessWidget {
     required this.type,
     this.homeTeam,
     this.awayTeam,
-    this.onTap,
+    this.onOpinar,
     this.homeScore,
     this.awayScore,
     this.homeScorePrediction,
@@ -65,6 +67,28 @@ class Predication extends StatelessWidget {
   });
 
   @override
+  State<Predication> createState() => _PredicationState();
+}
+
+class _PredicationState extends State<Predication> {
+  String? _errorText;
+  late ResultGuessEnum _selectedResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedResult = widget.resultGuess;
+  }
+
+  @override
+  void didUpdateWidget(Predication oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.resultGuess != oldWidget.resultGuess) {
+      _selectedResult = widget.resultGuess;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -73,30 +97,139 @@ class Predication extends StatelessWidget {
         color: AppColors.bgSecondary,
         borderRadius: BorderRadius.circular(4),
         border: Border(
-          bottom: BorderSide(width: 3, color: matchStatus != MatchStatus.finished ? AppColors.yellowPrimary : getColor(type)),
+          bottom: BorderSide(
+            width: 3, 
+            color: widget.matchStatus != MatchStatus.finished 
+                ? AppColors.yellowPrimary 
+                : getColor(widget.type),
+          ),
         ),
       ),
       child: Column(
-        spacing: 12,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          time != null ? Text(time!, style: AppFonts.time) : const SizedBox.shrink(),
-          Text(match, style: AppFonts.titleSmall),
+          if (widget.time != null) ...[
+            Text(widget.time!, style: AppFonts.time),
+            const SizedBox(height: 12),
+          ],
+          Text(widget.match, style: AppFonts.titleSmall),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/teams/${homeTeam ?? 'placeholder'}.png', width: 48, height: 48),
+              Image.asset('assets/teams/${widget.homeTeam ?? 'placeholder'}.png', width: 48, height: 48),
               const SizedBox(width: 12),
-              Text('${homeScore ?? ''}', style: AppFonts.titleMedium),
+              Text('${widget.homeScore ?? ''}', style: AppFonts.titleMedium),
               const SizedBox(width: 12),
               Icon(LucideIcons.x, size: 24, color: AppColors.textMuted),
               const SizedBox(width: 12),
-              Text('${awayScore ?? ''}', style: AppFonts.titleMedium),
+              Text('${widget.awayScore ?? ''}', style: AppFonts.titleMedium),
               const SizedBox(width: 12),
-              Image.asset('assets/teams/${awayTeam ?? 'placeholder'}.png', width: 48, height: 48),
+              Image.asset('assets/teams/${widget.awayTeam ?? 'placeholder'}.png', width: 48, height: 48),
             ],
           ),
-          Divider(color: AppColors.textMuted, height: 20),
+          const SizedBox(height: 8),
+          widget.type == TypePredicationEnum.result
+              ? CustomDivider(text: 'Quem você acha que vence?')
+              : CustomDivider(text: 'Qual o placar?'),
+          const SizedBox(height: 8),
+          widget.type == TypePredicationEnum.result
+            ? Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: OptionWin(
+                    team: widget.homeTeam ?? 'Mandante',
+                    value: _selectedResult == ResultGuessEnum.homeWin,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedResult = _selectedResult == ResultGuessEnum.homeWin
+                            ? ResultGuessEnum.nulled
+                            : ResultGuessEnum.homeWin;
+                        _errorText = null;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: OptionWin(
+                    value: _selectedResult == ResultGuessEnum.draw,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedResult = _selectedResult == ResultGuessEnum.draw
+                            ? ResultGuessEnum.nulled
+                            : ResultGuessEnum.draw;
+                        _errorText = null;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 1,
+                  child: OptionWin(
+                    team: widget.awayTeam ?? 'Visitante',
+                    value: _selectedResult == ResultGuessEnum.awayWin,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedResult = _selectedResult == ResultGuessEnum.awayWin
+                            ? ResultGuessEnum.nulled
+                            : ResultGuessEnum.awayWin;
+                        _errorText = null;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )
+            : Row(
+              children: [
+                Expanded(
+                  child: OptionScore(
+                    team: widget.homeTeam ?? 'Mandante',
+                    controller: TextEditingController(text: widget.homeScorePrediction?.toString() ?? ''),
+                  ),
+                ),
+                const SizedBox(width: 48),
+                Icon(LucideIcons.x, size: 24, color: AppColors.textMuted),
+                const SizedBox(width: 48),
+                Expanded(
+                  child: OptionScore(
+                    team: widget.awayTeam ?? 'Visitante',
+                    controller: TextEditingController(text: widget.awayScorePrediction?.toString() ?? ''),
+                    left: true,
+                  ),
+                ),
+              ],
+            ),
+          if (_errorText != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _errorText!,
+              style: AppFonts.caption.copyWith(color: AppColors.textError),
+            ),
+          ],
+          const SizedBox(height: 16),
+          TertiaryButton(
+            icon: LucideIcons.check,
+            text: 'COMFIRMAR PALPITE',
+            isLoading: false,
+            onPressed: () {
+              if (_selectedResult == ResultGuessEnum.nulled) {
+                setState(() {
+                  _errorText = 'selecione alguma opção';
+                });
+              } else {
+                setState(() {
+                  _errorText = null;
+                });
+                widget.onOpinar?.call(_selectedResult);
+              }
+            },
+          ),
         ],
       ),
     );
@@ -104,22 +237,24 @@ class Predication extends StatelessWidget {
 
   Color getColor(TypePredicationEnum type) {
     if (type == TypePredicationEnum.exact) {
-      if (homeScorePrediction == homeScore && awayScorePrediction == awayScore) {
+      if (widget.homeScorePrediction == widget.homeScore && widget.awayScorePrediction == widget.awayScore) {
         return AppColors.greenPrimary;
       }
       return AppColors.textError;
     }
 
-    if (homeScore! > awayScore! && resultGuess == ResultGuessEnum.homeWin) {
-      return AppColors.greenPrimary;
-    }
+    if (widget.homeScore != null && widget.awayScore != null) {
+      if (widget.homeScore! > widget.awayScore! && widget.resultGuess == ResultGuessEnum.homeWin) {
+        return AppColors.greenPrimary;
+      }
 
-    if (homeScore! < awayScore! && resultGuess == ResultGuessEnum.awayWin) {
-      return AppColors.greenPrimary;
-    }
+      if (widget.homeScore! < widget.awayScore! && widget.resultGuess == ResultGuessEnum.awayWin) {
+        return AppColors.greenPrimary;
+      }
 
-    if (homeScore! == awayScore! && resultGuess == ResultGuessEnum.draw) {
-      return AppColors.greenPrimary;
+      if (widget.homeScore! == widget.awayScore! && widget.resultGuess == ResultGuessEnum.draw) {
+        return AppColors.greenPrimary;
+      }
     }
 
     return AppColors.textError;

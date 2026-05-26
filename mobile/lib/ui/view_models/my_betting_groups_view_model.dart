@@ -1,71 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/services/auth_service.dart';
+import 'package:mobile/services/betting_group_service.dart';
 
 class MyBettingGroupsViewModel extends ChangeNotifier {
+  final AuthService _authService = AuthService();
+  final BettingGroupService _bettingGroupService = BettingGroupService();
 
-  // Controllers
   final TextEditingController searchController = TextEditingController();
 
-  // State
   bool isLoading = false;
+  List<Map<String, dynamic>> _allGroups = [];
+  List<Map<String, dynamic>> myGroups = [];
 
-  final List<Map<String, dynamic>> myGroups = [
-    {
-      'id': 1,
-      'title': 'Bolão do Rodrigão',
-      'creator': 'Rodrigo G.',
-      'avatars': [
-        'https://i.pravatar.cc/150?img=1',
-        'https://i.pravatar.cc/150?img=2',
-        'https://i.pravatar.cc/150?img=3',
-        'https://i.pravatar.cc/150?img=4',
-      ],
-      'additionalCount': 38,
-    },
-    {
-      'id' : 2,
-      'title': 'Bolão da Firma',
-      'creator': 'Diego F.',
-      'avatars': [
-        'https://i.pravatar.cc/150?img=5',
-        'https://i.pravatar.cc/150?img=6',
-        'https://i.pravatar.cc/150?img=7',
-        'https://i.pravatar.cc/150?img=8',
-      ],
-      'additionalCount': 3,
-    },
-    {
-      'id': 3,
-      'title': 'Família & Amigos',
-      'creator': 'Joseph O.',
-      'avatars': [
-        'https://i.pravatar.cc/150?img=9',
-        'https://i.pravatar.cc/150?img=10',
-        'https://i.pravatar.cc/150?img=11',
-        'https://i.pravatar.cc/150?img=12',
-      ],
-      'additionalCount': 0,
-    },
-    {
-      'id': 4,
-      'title': 'Um bolão recém criado',
-      'creator': 'Diego F.',
-      'avatars': <String>[],
-      'additionalCount': 0,
-    },
-  ];
+  MyBettingGroupsViewModel() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadUserGroups();
+    });
+  }
 
-  // Metodos
+  Future<void> loadUserGroups() async {
+    isLoading = true;
+    notifyListeners();
+    final userId = (await _authService.getCurrentUserId()) ?? 'dev-user-id';
+    final apiGroups = await _bettingGroupService.getUserBettingGroups(userId);
+    if (apiGroups != null) {
+      _allGroups = apiGroups.where((g) => g != null).map(_mapSingleGroup).toList();
+      myGroups = List.from(_allGroups);
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Map<String, dynamic> _mapSingleGroup(dynamic group) {
+    final List<dynamic> participants = group['participants'] ?? [];
+    return {
+      'id': group['id'],
+      'title': group['name'] ?? '',
+      'creator': group['creator']?['name'] ?? 'Criador',
+      'avatars': _extractAvatars(participants),
+      'additionalCount': participants.length > 4 ? participants.length - 4 : 0,
+    };
+  }
+
+  List<String> _extractAvatars(List<dynamic> participants) {
+    return participants
+        .where((p) => p != null && p['user'] != null)
+        .take(4)
+        .map((p) => _getUserAvatar(p['user']))
+        .toList();
+  }
+
+  String _getUserAvatar(dynamic user) {
+    final image = user['image'] as String?;
+    if (image != null && image.isNotEmpty) {
+      return image;
+    }
+    final name = user['name'] ?? 'User';
+    return 'initials:${_getInitials(name)}:$name';
+  }
+
   Future<void> searchBettingGroups(GlobalKey<FormState> formKey) async {
+    if (searchController.text.trim().isEmpty) {
+      myGroups = List.from(_allGroups);
+      notifyListeners();
+      return;
+    }
     if (!formKey.currentState!.validate()) return;
 
     isLoading = true;
     notifyListeners();
 
-    // Simula uma busca na API
-    await Future.delayed(const Duration(seconds: 2));
+    final query = searchController.text.toLowerCase().trim();
+    myGroups = _allGroups
+        .where((group) => group['title'].toString().toLowerCase().contains(query))
+        .toList();
 
     isLoading = false;
     notifyListeners();
+  }
+
+  String _getInitials(String name) {
+    final words = name.trim().split(RegExp(r'\s+'));
+    if (words.isEmpty || words[0].isEmpty) {
+      return '';
+    }
+    if (words.length == 1) {
+      return words[0][0].toUpperCase();
+    }
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
   }
 
   @override

@@ -1,5 +1,4 @@
 .env
-/mobile
 
 
 # Flutter ignores
@@ -14,3 +13,6 @@ mobile/pubspec.lock
 # api
 api/generated/
 api/.env
+
+.antigravitycli/
+api/dist/

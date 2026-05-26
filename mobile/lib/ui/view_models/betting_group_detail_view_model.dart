@@ -26,7 +26,20 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       'time': '* 42\'',
       'isOpined': true,
     },
-
+    {
+      'match': 'Flamengo vs. Fluminense', 
+      'status': 'SCHEDULED',
+      'type': 'MATCH_RESULT',
+      'homeTeam': 'FLA',
+      'awayTeam': 'FLU',
+      'homeScore': 1,
+      'awayScore': 1,
+      'homeScorePrediction': null,
+      'awayScorePrediction': null, 
+      'resultGuess': 'HOME_WIN', 
+      'time': '* 30\'',
+      'isOpined': true,
+    },
   ];
 
   final String groupName = "Bolão do Rodrigão";

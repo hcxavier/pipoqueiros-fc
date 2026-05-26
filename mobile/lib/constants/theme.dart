@@ -103,6 +103,7 @@ class AppThemes {
     onPrimary: AppColors.black,
     secondary: AppColors.borderInput,
     onSecondary: AppColors.black,
+    tertiary: AppColors.greenPrimary,
     primaryContainer: AppColors.bgSecondary,
     secondaryContainer: AppColors.surfaceInput,
     tertiaryContainer: AppColors.bgTertiary,

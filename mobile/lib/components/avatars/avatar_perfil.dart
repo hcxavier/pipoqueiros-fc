@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/constants/styles.dart';
 
@@ -33,13 +34,25 @@ class AvatarPerfil extends StatelessWidget {
   }
 
   Widget _buildFallback() {
-    return Center(
-      child: Text(
-        _initial,
-        style: TextStyle(
-          fontSize: size * 0.38,
-          fontWeight: FontWeight.w700,
-          color: const Color(0xFF2B2B2B),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.bgTertiary,
+            AppColors.bgSecondary,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          _initial,
+          style: GoogleFonts.roboto(
+            fontSize: size * 0.38,
+            fontWeight: FontWeight.w900,
+            color: AppColors.yellowPrimary,
+          ),
         ),
       ),
     );
@@ -59,10 +72,10 @@ class AvatarPerfil extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.bgTertiary,
-                width: 4,
+                color: AppColors.yellowPrimary,
+                width: 3,
               ),
-              color: Colors.white,
+              color: AppColors.bgSecondary,
             ),
             child: ClipOval(
              child: _hasImagePath
@@ -88,10 +101,10 @@ class AvatarPerfil extends StatelessWidget {
                 height: size * 0.28,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.bgTertiary,
+                  color: AppColors.yellowPrimary,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
+                      color: Colors.black.withValues(alpha: 0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -99,7 +112,7 @@ class AvatarPerfil extends StatelessWidget {
                 ),
                 child: Icon(
                   LucideIcons.edit,
-                  color: AppColors.yellowPrimary,
+                  color: AppColors.bgPrimary,
                   size: size * 0.14,
                 ),
               ),

@@ -29,7 +29,12 @@ class _LoginPageState extends State<LoginPage> {
               body: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 128.0, bottom: 48.0),
+                    padding: const EdgeInsets.only(
+                      left: 24.0,
+                      right: 24.0,
+                      top: 128.0,
+                      bottom: 48.0,
+                    ),
                     child: SvgPicture.asset(
                       'assets/logo/logo.svg',
                       width: 120,
@@ -38,7 +43,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Expanded(
                     child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+                      behavior: ScrollConfiguration.of(
+                        context,
+                      ).copyWith(overscroll: false),
                       child: SingleChildScrollView(
                         physics: const ClampingScrollPhysics(),
                         padding: const EdgeInsets.only(
@@ -67,19 +74,64 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: LucideIcons.lock,
                               validator: validatePassword,
                             ),
+                            if (vm.errorMessage != null)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.red.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        LucideIcons.alertCircle,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          vm.errorMessage!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             PrimaryButton(
-                              onPressed: () async => {
-                                if (await vm.login(_formKey)) {
-                                  Navigator.pushReplacementNamed(context, '/home'),
-                                },
-                              },
-                              text: 'ENTRAR',
+                              onPressed: vm.isLoading
+                                  ? null
+                                  : () async {
+                                      if (await vm.login(_formKey)) {
+                                        if (context.mounted) {
+                                          Navigator.pushReplacementNamed(
+                                            context,
+                                            '/home',
+                                          );
+                                        }
+                                      }
+                                    },
+                              text: vm.isLoading ? 'ENTRANDO...' : 'ENTRAR',
                             ),
                             GoogleButton(
-                              onPressed: () async => {
+                              onPressed: () async {
                                 if (await vm.googleLogin()) {
-                                  Navigator.pushReplacementNamed(context, '/home'),
-                                },
+                                  if (context.mounted) {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/home',
+                                    );
+                                  }
+                                }
                               },
                               text: 'ENTRAR COM GOOGLE',
                             ),
