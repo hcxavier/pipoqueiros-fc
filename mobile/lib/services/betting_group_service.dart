@@ -4,14 +4,12 @@ import 'package:mobile/services/api_service.dart';
 class BettingGroupService {
   final ApiService _api;
 
-  BettingGroupService({ApiService? apiService}) : _api = apiService ?? ApiService();
+  BettingGroupService({ApiService? apiService})
+    : _api = apiService ?? ApiService();
 
   Future<int?> createBettingGroup(String name) async {
     try {
-      final response = await _api.post(
-        '/betting-groups',
-        data: {'name': name},
-      );
+      final response = await _api.post('/betting-groups', data: {'name': name});
       if (response.statusCode != 201) {
         return null;
       }
@@ -35,9 +33,9 @@ class BettingGroupService {
     return null;
   }
 
-  Future<List<dynamic>?> getUserBettingGroups(String userId) async {
+  Future<List<dynamic>?> getUserBettingGroups() async {
     try {
-      final response = await _api.get('/users/$userId/betting-groups');
+      final response = await _api.get('/users/betting-groups');
       if (response.statusCode != 200) {
         return null;
       }
@@ -57,4 +55,3 @@ class BettingGroupService {
     return null;
   }
 }
-

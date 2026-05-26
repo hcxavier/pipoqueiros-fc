@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/services/auth_service.dart';
 import 'package:mobile/services/betting_group_service.dart';
 
 class MyBettingGroupsViewModel extends ChangeNotifier {
-  final AuthService _authService = AuthService();
   final BettingGroupService _bettingGroupService = BettingGroupService();
 
   final TextEditingController searchController = TextEditingController();
@@ -21,10 +19,12 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
   Future<void> loadUserGroups() async {
     isLoading = true;
     notifyListeners();
-    final userId = (await _authService.getCurrentUserId()) ?? 'dev-user-id';
-    final apiGroups = await _bettingGroupService.getUserBettingGroups(userId);
+    final apiGroups = await _bettingGroupService.getUserBettingGroups();
     if (apiGroups != null) {
-      _allGroups = apiGroups.where((g) => g != null).map(_mapSingleGroup).toList();
+      _allGroups = apiGroups
+          .where((g) => g != null)
+          .map(_mapSingleGroup)
+          .toList();
       myGroups = List.from(_allGroups);
     }
     isLoading = false;
@@ -72,7 +72,9 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
 
     final query = searchController.text.toLowerCase().trim();
     myGroups = _allGroups
-        .where((group) => group['title'].toString().toLowerCase().contains(query))
+        .where(
+          (group) => group['title'].toString().toLowerCase().contains(query),
+        )
         .toList();
 
     isLoading = false;
