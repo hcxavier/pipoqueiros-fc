@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { getAddressUser, userFindById } from "../controller/user.controller";
 import { getUserBettingGroupsController } from "../controller/betting-group.controller";
+import { getAddressUser, userFindById, updateProfilePicture } from "../controller/user.controller";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { authMiddleware } from "../lib/auth-middleware";
@@ -63,6 +64,13 @@ export async function usersRoute(app: FastifyInstance) {
                 id: z.string(),
             }),
             security: [{ bearerAuth: [] }],
+        method: "PATCH",
+        url: "/users/avatar",
+        preHandler: [authMiddleware],
+        schema: {
+            tags: ["Users"],
+            description: "[🔒 Autenticado] Atualizar imagem de perfil do usuário",
+            consumes: ["multipart/form-data"],
             response: {
                 200: z.object({
                     code: z.number(),
@@ -90,6 +98,10 @@ export async function usersRoute(app: FastifyInstance) {
                             ),
                         })
                     ),
+                    data: z.object({
+                        url: z.string(),
+                        user: z.any(),
+                    }),
                 }),
                 400: errorResponseSchema,
                 404: errorResponseSchema,
@@ -97,6 +109,9 @@ export async function usersRoute(app: FastifyInstance) {
             },
         },
         handler: getUserBettingGroupsController,
+            security: [{ bearerAuth: [] }],
+        },
+        handler: updateProfilePicture,
     });
 }
 
