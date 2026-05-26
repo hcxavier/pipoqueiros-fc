@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/components/widgets.dart';
-import 'package:mobile/ui/view_models/ranking_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile/ui/view_models/ranking_view_model.dart';
+import 'package:mobile/components/widgets.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key});

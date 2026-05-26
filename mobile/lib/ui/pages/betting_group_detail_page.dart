@@ -57,15 +57,15 @@ class BettingGroupDetailPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     const Divider(thickness: 1),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     SwitchTab(
                       selectedTabIndex: vm.selectedTabIndex,
                       onTabSelected: vm.setTab,
                       tabTitles: ['Seus palpites', 'Ranking do grupo'],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: vm.selectedTabIndex == 1
                           ? RankingBettingGroup(rankingData: vm.rankingData)
