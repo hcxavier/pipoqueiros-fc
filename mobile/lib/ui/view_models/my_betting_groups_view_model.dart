@@ -35,6 +35,7 @@ class MyBettingGroupsViewModel extends ChangeNotifier {
     final List<dynamic> participants = group['participants'] ?? [];
     return {
       'id': group['id'],
+      'code': group['code'] ?? group['id'],
       'title': group['name'] ?? '',
       'creator': group['creator']?['name'] ?? 'Criador',
       'avatars': _extractAvatars(participants),

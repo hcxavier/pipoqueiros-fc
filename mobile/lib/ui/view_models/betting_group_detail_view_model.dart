@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/services/betting_group_service.dart';
 
 class BettingGroupDetailViewModel extends ChangeNotifier {
+  final BettingGroupService _bettingGroupService = BettingGroupService();
+
   // 0 para palpites 1 para ranking
   int selectedTabIndex = 1;
 
-  final List<Map<String, dynamic>> rankingData = [
-    {'name': 'Rodrigo G.', 'points': 100, 'avatarUrl': 'https://i.pravatar.cc/150?img=1'},
-    {'name': 'Maria S.', 'points': 90, 'avatarUrl': 'https://i.pravatar.cc/150?img=2'},
-    {'name': 'João P.', 'points': 80, 'avatarUrl': 'https://i.pravatar.cc/150?img=3'},
-    {'name': 'Ana L.', 'points': 70, 'avatarUrl': 'https://i.pravatar.cc/150?img=4'},
-  ];
+  final List<Map<String, dynamic>> rankingData = [];
 
   final List<Map<String, dynamic>> predications = [
     {
-      'match': 'Bahia vs. Vitória', 
+      'match': 'Bahia vs. Vitória',
       'status': 'SCHEDULED',
       'type': 'EXACT_SCORE',
       'homeTeam': 'BAH',
@@ -21,13 +19,13 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       'homeScore': 2,
       'awayScore': 1,
       'homeScorePrediction': 2,
-      'awayScorePrediction': 1, 
-      'resultGuess': 'NULLED', 
+      'awayScorePrediction': 1,
+      'resultGuess': 'NULLED',
       'time': '* 42\'',
       'isOpined': true,
     },
     {
-      'match': 'Flamengo vs. Fluminense', 
+      'match': 'Flamengo vs. Fluminense',
       'status': 'SCHEDULED',
       'type': 'MATCH_RESULT',
       'homeTeam': 'FLA',
@@ -35,8 +33,8 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       'homeScore': 1,
       'awayScore': 1,
       'homeScorePrediction': null,
-      'awayScorePrediction': null, 
-      'resultGuess': 'HOME_WIN', 
+      'awayScorePrediction': null,
+      'resultGuess': 'HOME_WIN',
       'time': '* 30\'',
       'isOpined': true,
     },
@@ -54,6 +52,30 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
 
   void setTab(int index) {
     selectedTabIndex = index;
+    notifyListeners();
+  }
+
+  Future<void> loadGroupDetails(String code) async {
+    print('===> Chamando loadGroupDetails com código $code');
+    await getGroupRanking(code);
+  }
+
+  Future<void> getGroupRanking(String code) async {
+    if (code.isEmpty) return;
+    final ranking = await _bettingGroupService.getBettingGroupRanking(code);
+    // Atualizar o estado com os dados do ranking
+    rankingData.clear();
+    notifyListeners();
+
+    rankingData.addAll(
+      ranking.map((item) {
+        return {
+          'name': item['user']['name'] ?? 'Usuário',
+          'imageUrl': item['user']['image'] ?? '',
+          'points': item['score'] ?? 0,
+        };
+      }).toList(),
+    );
     notifyListeners();
   }
 

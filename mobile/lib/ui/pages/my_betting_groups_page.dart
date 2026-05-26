@@ -51,7 +51,9 @@ class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
                             PrimaryButton(
                               text: 'BUSCAR BOLÃO PELO NOME',
                               icon: LucideIcons.search,
-                              onPressed: () {vm.searchBettingGroups(_formKey);},
+                              onPressed: () {
+                                vm.searchBettingGroups(_formKey);
+                              },
                             ),
                           ],
                         ),
@@ -59,9 +61,7 @@ class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
                       const SizedBox(height: 8),
                       const Divider(thickness: 1),
                       const SizedBox(height: 8),
-                      Expanded(
-                        child: _buildContent(vm),
-                      ),
+                      Expanded(child: _buildContent(vm)),
                     ],
                   );
                 },
@@ -74,11 +74,21 @@ class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
   }
 
   Widget _buildContent(MyBettingGroupsViewModel vm) {
-    if (vm.isLoading) return const Center(child: CircularProgressIndicator(color: AppColors.yellowPrimary));
-    if (vm.myGroups.isEmpty) return const Center(child: Text('Nenhum bolão encontrado.', style: TextStyle(color: Colors.white70, fontSize: 16)));
+    if (vm.isLoading)
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.yellowPrimary),
+      );
+    if (vm.myGroups.isEmpty)
+      return const Center(
+        child: Text(
+          'Nenhum bolão encontrado.',
+          style: TextStyle(color: Colors.white70, fontSize: 16),
+        ),
+      );
     return ListView.builder(
       itemCount: vm.myGroups.length,
-      itemBuilder: (context, index) => _buildGroupCard(context, vm.myGroups[index]),
+      itemBuilder: (context, index) =>
+          _buildGroupCard(context, vm.myGroups[index]),
     );
   }
 
@@ -90,7 +100,11 @@ class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
         imageUrls: List<String>.from(group['avatars'] ?? []),
         additionalCount: group['additionalCount'] ?? 0,
       ),
-      onTap: () => Navigator.pushNamed(context, '/detail-betting-group', arguments: group['id']),
+      onTap: () => Navigator.pushNamed(
+        context,
+        '/detail-betting-group',
+        arguments: group['code'] ?? group['id'].toString(),
+      ),
     );
   }
 }

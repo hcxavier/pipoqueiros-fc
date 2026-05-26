@@ -54,4 +54,26 @@ class BettingGroupService {
     }
     return null;
   }
+
+  Future<List<dynamic>> getBettingGroupRanking(String groupCode) async {
+    try {
+      final response = await _api.get('/betting-groups/$groupCode/ranking');
+      if (response.statusCode != 200) {
+        return [];
+      }
+      final data = response.data;
+      if (data == null) {
+        return [];
+      }
+      final ranking = data['data'];
+      if (ranking is List) {
+        return ranking;
+      }
+    } on DioException catch (e) {
+      print('Erro ao buscar ranking do bolão: ${e.message}');
+    } catch (e) {
+      print('Erro inesperado ao buscar ranking: $e');
+    }
+    return [];
+  }
 }
