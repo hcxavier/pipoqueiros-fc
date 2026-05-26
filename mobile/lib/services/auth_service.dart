@@ -83,4 +83,28 @@ class AuthService {
       return false;
     }
   }
+
+  Future<String?> getCurrentUserId() async {
+    try {
+      final response = await _api.get('/api/auth/get-session');
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final data = response.data;
+      if (data == null) {
+        return null;
+      }
+      final user = data['user'];
+      if (user == null) {
+        return null;
+      }
+      final id = user['id'];
+      if (id is String) {
+        return id;
+      }
+    } catch (e) {
+      print('Erro ao buscar ID do usuário: $e');
+    }
+    return null;
+  }
 }
