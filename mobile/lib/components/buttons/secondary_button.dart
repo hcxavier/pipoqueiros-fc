@@ -25,8 +25,10 @@ class SecondaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 24, color: square ? AppColors.yellowPrimary : AppColors.white),
-            ?!square ? SizedBox(width: 10) : null,
-            ?!square ? Text(text ?? '', style: AppFonts.textButton) : null,
+            if (!square) ...[
+              const SizedBox(width: 10),
+              Text(text ?? '', style: AppFonts.textButton),
+            ],
           ],
         ),
       ),

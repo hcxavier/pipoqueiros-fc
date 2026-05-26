@@ -36,7 +36,7 @@ class AvatarIcon extends StatelessWidget {
       return Text(
         name![0].toUpperCase(),
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: radius,
           fontWeight: FontWeight.bold,
         ),

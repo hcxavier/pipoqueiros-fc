@@ -29,7 +29,9 @@ class BuildTabButton extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              color: isSmall && isSelected ? AppColors.black : AppColors.white,
+              color: isSelected 
+                  ? (isSmall ? AppColors.black : AppColors.textPrimary) 
+                  : AppColors.textSecondary,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 14,
             ),

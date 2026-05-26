@@ -74,17 +74,19 @@ class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
   }
 
   Widget _buildContent(MyBettingGroupsViewModel vm) {
-    if (vm.isLoading)
+    if (vm.isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.yellowPrimary),
       );
-    if (vm.myGroups.isEmpty)
-      return const Center(
+    }
+    if (vm.myGroups.isEmpty) {
+      return Center(
         child: Text(
           'Nenhum bolão encontrado.',
-          style: TextStyle(color: Colors.white70, fontSize: 16),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
         ),
       );
+    }
     return ListView.builder(
       itemCount: vm.myGroups.length,
       itemBuilder: (context, index) =>
