@@ -4,14 +4,12 @@ import 'package:mobile/services/api_service.dart';
 class BettingGroupService {
   final ApiService _api;
 
-  BettingGroupService({ApiService? apiService}) : _api = apiService ?? ApiService();
+  BettingGroupService({ApiService? apiService})
+    : _api = apiService ?? ApiService();
 
   Future<int?> createBettingGroup(String name) async {
     try {
-      final response = await _api.post(
-        '/betting-groups',
-        data: {'name': name},
-      );
+      final response = await _api.post('/betting-groups', data: {'name': name});
       if (response.statusCode != 201) {
         return null;
       }
@@ -35,9 +33,9 @@ class BettingGroupService {
     return null;
   }
 
-  Future<List<dynamic>?> getUserBettingGroups(String userId) async {
+  Future<List<dynamic>?> getUserBettingGroups() async {
     try {
-      final response = await _api.get('/users/$userId/betting-groups');
+      final response = await _api.get('/users/betting-groups');
       if (response.statusCode != 200) {
         return null;
       }
@@ -56,5 +54,42 @@ class BettingGroupService {
     }
     return null;
   }
-}
 
+  Future<List<dynamic>> getBettingGroupRanking(String groupCode) async {
+    try {
+      final response = await _api.get('/betting-groups/$groupCode/ranking');
+      if (response.statusCode != 200) {
+        return [];
+      }
+      final data = response.data;
+      if (data == null) {
+        return [];
+      }
+      final ranking = data['data'];
+      if (ranking is List) {
+        return ranking;
+      }
+    } on DioException catch (e) {
+      print('Erro ao buscar ranking do bolão: ${e.message}');
+    } catch (e) {
+      print('Erro inesperado ao buscar ranking: $e');
+    }
+    return [];
+  }
+
+  Future<bool> joinBettingGroup(String groupCode) async {
+    try {
+      final response = await _api.post('/betting-groups/add-user', 
+        data: {'bettingGroupCode': groupCode}
+      );
+
+      return response.statusCode == 200;
+      
+    } on DioException catch (e) {
+      print('Erro ao entrar no bolão: ${e.message}');
+    } catch (e) {
+      print('Erro inesperado ao entrar no bolão: $e');
+    }
+    return false;
+  }
+}

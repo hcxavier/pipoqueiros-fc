@@ -23,6 +23,13 @@ class SwitchTab extends StatelessWidget {
       width: isSmall ? 260 : double.infinity,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
+        boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         color: AppColors.bgSecondary,
         borderRadius: BorderRadius.circular(4),
       ),

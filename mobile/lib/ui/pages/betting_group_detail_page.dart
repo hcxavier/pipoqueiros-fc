@@ -5,27 +5,29 @@ import 'package:mobile/constants/styles.dart';
 import 'package:mobile/components/widgets.dart';
 
 class BettingGroupDetailPage extends StatelessWidget {
-  final int bettingGroupId;
+  final String bettingGroupCode;
 
-  const BettingGroupDetailPage({super.key, required this.bettingGroupId});
+  const BettingGroupDetailPage({super.key, required this.bettingGroupCode});
 
   @override
   Widget build(BuildContext context) {
-    int resolvedId = bettingGroupId;
-    final routeArgs = ModalRoute.of(context)?.settings.arguments;
-    if (routeArgs is int) {
-      resolvedId = routeArgs;
-    }
-
     return ChangeNotifierProvider(
-      create: (context) => BettingGroupDetailViewModel(),
+      lazy: false,
+      create: (context) {
+        final vm = BettingGroupDetailViewModel();
+        vm.loadGroupDetails(bettingGroupCode);
+        return vm;
+      },
       child: Scaffold(
         backgroundColor: AppColors.bgPrimary,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Consumer<BettingGroupDetailViewModel>(
             builder: (context, vm, child) {
-              return AppBarTop(title: vm.groupName, onLeftPressed: () => Navigator.pop(context));
+              return AppBarTop(
+                title: vm.groupName,
+                onLeftPressed: () => Navigator.pop(context),
+              );
             },
           ),
         ),
@@ -47,7 +49,10 @@ class BettingGroupDetailPage extends StatelessWidget {
                             children: [
                               Text(vm.groupName, style: AppFonts.titleMedium),
                               const SizedBox(height: 4),
-                              Text('Criado por ${vm.creatorName}', style: AppFonts.caption,),
+                              Text(
+                                'Criado por ${vm.creatorName}',
+                                style: AppFonts.caption,
+                              ),
                             ],
                           ),
                         ),
@@ -69,7 +74,9 @@ class BettingGroupDetailPage extends StatelessWidget {
                     Expanded(
                       child: vm.selectedTabIndex == 1
                           ? RankingBettingGroup(rankingData: vm.rankingData)
-                          : PredicationBettingGroup(predications: vm.predications),
+                          : PredicationBettingGroup(
+                              predications: vm.predications,
+                            ),
                     ),
                   ],
                 ),

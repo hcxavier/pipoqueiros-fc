@@ -233,4 +233,35 @@ class AuthService {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>> updateProfilePicture(String filePath) async {
+    try {
+      final fileName = filePath.split('/').last;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath, filename: fileName),
+      });
+
+      final response = await _api.put(
+        '/users/profile-picture',
+        data: formData,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return {'success': true, 'data': response.data};
+      }
+    } on DioException catch (e) {
+      print('Update Profile Picture Error - Status: ${e.response?.statusCode}');
+      print('Detalhes: ${e.response?.data}');
+      String errorMessage = 'Erro ao conectar ao servidor.';
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response?.data is Map) {
+        errorMessage = e.response?.data['message'] ?? 'Falha ao atualizar foto de perfil.';
+      }
+      return {'success': false, 'message': errorMessage};
+    } catch (e) {
+      print('Update Profile Picture Error: $e');
+    }
+    return {'success': false, 'message': 'Ocorreu um erro ao atualizar a foto.'};
+  }
 }

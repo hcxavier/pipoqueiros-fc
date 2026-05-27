@@ -18,7 +18,11 @@ class AppRoutes {
       login: (context) => const LoginPage(),
       home: (context) => const HomePage(),
       register: (context) => const RegisterPage(),
-      detailBettingGroup: (context) => const BettingGroupDetailPage(bettingGroupId: 0),
+      detailBettingGroup: (context) {
+        final bettingGroupCode =
+            ModalRoute.of(context)?.settings.arguments as String? ?? '';
+        return BettingGroupDetailPage(bettingGroupCode: bettingGroupCode);
+      },
     };
   }
 }

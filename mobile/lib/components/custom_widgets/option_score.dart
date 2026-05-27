@@ -18,10 +18,10 @@ class OptionScore extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF161618),
+        color: AppColors.bgSecondary,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: const Color(0xFF2C2C2E),
+          color: AppColors.borderInput,
           width: 1.5,
         ),
       ),
@@ -33,7 +33,7 @@ class OptionScore extends StatelessWidget {
             'assets/teams/$team.png',
             width: 24,
             height: 24,
-            errorBuilder: (context, error, stackTrace) => const Icon(
+            errorBuilder: (context, error, stackTrace) => Icon(
               Icons.shield,
               color: AppColors.textMuted,
               size: 24,
@@ -51,7 +51,7 @@ class OptionScore extends StatelessWidget {
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
                 border: InputBorder.none,

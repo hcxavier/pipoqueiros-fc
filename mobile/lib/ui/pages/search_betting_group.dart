@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/ui/pages/qr_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/ui/view_models/search_betting_group_view_model.dart';
@@ -65,32 +66,27 @@ class _SearchBettingGroupPageState extends State<SearchBettingGroupPage> {
                                   onPressed: () async {
                                     final bettingGroupId = await vm.searchGroup(_formKey);
                                     if (bettingGroupId != null) {
-                                      Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
-                                    } else {
-                                      final screenHeight = MediaQuery.of(context).size.height;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: const Text('Bolão não encontrado'),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: EdgeInsets.only(
-                                            bottom: screenHeight - 250,
-                                            left: 16,
-                                            right: 16,
-                                          ),
-                                          padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 24),
-                                          dismissDirection: DismissDirection.up,
-                                          elevation: 0,
-                                        ),
-                                      );
+                                      Navigator.pushNamed(context, '/detail-betting-group', arguments: vm.codeController.text.trim().toUpperCase());
                                     }
                                   },
                                 ),
                               ),
                               const SizedBox(width: 12),
                               SecondaryButton(
+                                isdark: AppColors.isDark,
                                 square: true,
                                 icon: LucideIcons.qrCode,
-                                onPressed: () {}, // Implementar funcionalidade de leitura de QR Code
+                                onPressed: () async {
+                                  final String? qrCodeResult = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const QrScannerScreen(), 
+                                    ),
+                                  );
+                                  if (qrCodeResult != null && qrCodeResult.isNotEmpty) {
+                                    vm.codeController.text = qrCodeResult;
+                                  }
+                                },
                               ),
                             ],
                           ),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/services/betting_group_service.dart';
 
 class SearchBettingGroupViewModel extends ChangeNotifier {
+  final BettingGroupService _bettingGroupService = BettingGroupService();
+
   final TextEditingController codeController = TextEditingController();
 
-  Future<int?> searchGroup(GlobalKey<FormState> formKey) async {
+  Future<bool?> searchGroup(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return null;
-    // TODO: Implement search logic
-    return 1; // Replace with actual betting group ID
+    
+    return await _bettingGroupService.joinBettingGroup(codeController.text.trim().toUpperCase());
   }
 }

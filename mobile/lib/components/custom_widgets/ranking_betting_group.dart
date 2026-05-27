@@ -9,28 +9,28 @@ class RankingBettingGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return rankingData.isEmpty?
-    Center(
-      child: Text(
-        'O ranking desse bolão ainda não foi\nformado, aguarde os resultados.',
-        textAlign: TextAlign.center,
-        style: AppFonts.caption,
-      ),
-    ) :
-    ListView.builder(
-      itemCount: rankingData.length,
-      itemBuilder: (context, index) {
-        final item = rankingData[index];
-        return BettingGroupParticipantsCard(
-          title: item['name'],
-          content: '${item['points']} pontos(s)',
-          prefix: CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(item['avatarUrl']),
-          ),
-          suffix: RankingIndex(index),
-        );
-      },
-    );
+    return rankingData.isEmpty
+        ? Center(
+            child: Text(
+              'O ranking desse bolão ainda não foi\nformado, aguarde os resultados.',
+              textAlign: TextAlign.center,
+              style: AppFonts.caption,
+            ),
+          )
+        : ListView.builder(
+            itemCount: rankingData.length,
+            itemBuilder: (context, index) {
+              final item = rankingData[index];
+              return BettingGroupParticipantsCard(
+                title: item['name'],
+                content: '${item['points']} pontos(s)',
+                prefix: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(item['imageUrl']),
+                ),
+                suffix: RankingIndex(index),
+              );
+            },
+          );
   }
 }
