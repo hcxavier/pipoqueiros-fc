@@ -59,6 +59,12 @@ class AppFonts {
     color: AppColors.textBlack,
   );
 
+  static TextStyle get textButtonInvert => GoogleFonts.roboto(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: AppColors.invert,
+  );
+
   static TextStyle get time => GoogleFonts.roboto(
     fontSize: 12,
     fontWeight: FontWeight.bold,
@@ -99,6 +105,7 @@ class AppColors {
   static Color get textDark => isDark ? const Color(0xFF71717B) : const Color(0xFF374151);
   static Color get textBlack => const Color(0xFF09090A);
   static Color get textInput => isDark ? const Color(0xFFBCBCBC) : const Color(0xFF111827);
+  static Color get invert => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);

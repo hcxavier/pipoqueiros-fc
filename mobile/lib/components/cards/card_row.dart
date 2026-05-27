@@ -20,6 +20,13 @@ class CardRow extends StatelessWidget {
     return Container(
       // Fundo amarelo que servirá como a "borda" inferior
       decoration: BoxDecoration(
+        boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
         color: AppColors.brandYellow, // Amarelo vibrante
         borderRadius: BorderRadius.circular(12),
       ),

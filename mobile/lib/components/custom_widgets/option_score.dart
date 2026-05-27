@@ -18,10 +18,10 @@ class OptionScore extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF161618),
+        color: AppColors.bgSecondary,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: const Color(0xFF2C2C2E),
+          color: AppColors.borderInput,
           width: 1.5,
         ),
       ),

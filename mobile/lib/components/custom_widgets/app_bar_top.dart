@@ -21,6 +21,7 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     context.watch<SettingsViewModel>();
     return AppBar(
+      shadowColor: Colors.black.withOpacity(0.1),
       backgroundColor: AppColors.bgSecondary,
       scrolledUnderElevation: 0,
       leading: onLeftPressed != null

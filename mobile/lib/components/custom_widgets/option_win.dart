@@ -22,10 +22,10 @@ class OptionWin extends StatelessWidget {
       child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFF161618),
+            color: AppColors.bgSecondary,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: const Color(0xFF2C2C2E),
+              color: AppColors.borderInput,
               width: 1.5,
             ),
           ),
@@ -48,7 +48,7 @@ class OptionWin extends StatelessWidget {
                   color: value ? AppColors.yellowPrimary : Colors.transparent,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: const Color(0xFF3A3A3C),
+                    color: AppColors.borderInput,
                     width: 1.5,
                   ),
                 ),

@@ -73,29 +73,18 @@ class _SearchBettingGroupPageState extends State<SearchBettingGroupPage> {
                               ),
                               const SizedBox(width: 12),
                               SecondaryButton(
+                                isdark: AppColors.isDark,
                                 square: true,
                                 icon: LucideIcons.qrCode,
                                 onPressed: () async {
-                                  // 1. Navega para a tela do leitor de QR Code e aguarda um retorno
                                   final String? qrCodeResult = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      // Troque 'QrScannerScreen' pelo nome exato da classe da sua tela de leitura
                                       builder: (context) => const QrScannerScreen(), 
                                     ),
                                   );
-
-                                  // 2. Se a leitura não for nula (ou seja, o usuário leu um código em vez de só voltar)
                                   if (qrCodeResult != null && qrCodeResult.isNotEmpty) {
-                                    // Preenche o campo de texto com o código lido
                                     vm.codeController.text = qrCodeResult;
-                                    
-                                    // Opcional: Se quiser que ele já tente buscar automaticamente após ler o QR Code, 
-                                    // basta chamar o método de busca aqui mesmo:
-                                    // final bettingGroupId = await vm.searchGroup(_formKey);
-                                    // if (bettingGroupId != null) {
-                                    //   Navigator.pushNamed(context, '/detail-betting-group', arguments: vm.codeController.text.trim().toUpperCase());
-                                    // }
                                   }
                                 },
                               ),

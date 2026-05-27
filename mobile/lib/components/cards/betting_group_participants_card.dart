@@ -25,6 +25,13 @@ class BettingGroupParticipantsCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
           color: AppColors.bgSecondary,
           borderRadius: BorderRadius.circular(4),
           border: const Border(
