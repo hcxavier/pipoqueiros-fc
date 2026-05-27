@@ -74,48 +74,26 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: LucideIcons.lock,
                               validator: validatePassword,
                             ),
-                            if (vm.errorMessage != null)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Container(
-                                  padding: const EdgeInsets.all(12.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.red.withOpacity(0.5),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        LucideIcons.alertCircle,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          vm.errorMessage!,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+
                             PrimaryButton(
                               onPressed: vm.isLoading
                                   ? null
                                   : () async {
-                                      if (await vm.login(_formKey)) {
+                                      final loginViewModel = context.read<LoginViewModel>();
+                                      if (await loginViewModel.login(_formKey)) {
                                         if (context.mounted) {
                                           Navigator.pushReplacementNamed(
                                             context,
                                             '/home',
+                                          );
+                                        }
+                                      } else {
+                                        final error = loginViewModel.errorMessage;
+                                        if (context.mounted && error != null) {
+                                          SlackMessage.show(
+                                            context,
+                                            error,
+                                            title: 'Erro de Conexão',
                                           );
                                         }
                                       }

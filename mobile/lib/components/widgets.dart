@@ -20,3 +20,4 @@ export 'package:mobile/components/cards/predication.dart';
 export 'package:mobile/components/buttons/tertiary_button.dart';
 export 'package:mobile/components/custom_widgets/custom_divider.dart';
 export 'package:mobile/components/custom_widgets/option_score.dart';
+export 'package:mobile/components/custom_widgets/slack_message.dart';

@@ -5,6 +5,7 @@ import 'package:mobile/constants/styles.dart';
 import 'package:mobile/model/settings_model.dart';
 import 'package:mobile/services/auth_service.dart';
 import 'package:mobile/storages/user_storage.dart';
+import 'package:mobile/components/widgets.dart';
 
 class SettingsViewModel extends ChangeNotifier {
   final UserStorage _userStorage = UserStorage();
@@ -131,11 +132,10 @@ class SettingsViewModel extends ChangeNotifier {
       } else {
         notifyListeners();
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result['message'] ?? 'Erro ao atualizar foto de perfil.'),
-              backgroundColor: AppColors.textError,
-            ),
+          SlackMessage.show(
+            context,
+            result['message'] ?? 'Erro ao atualizar foto de perfil.',
+            title: 'Erro de Upload',
           );
         }
       }
@@ -144,11 +144,10 @@ class SettingsViewModel extends ChangeNotifier {
       notifyListeners();
       print('Erro ao escolher imagem: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Erro ao selecionar ou enviar imagem.'),
-            backgroundColor: AppColors.textError,
-          ),
+        SlackMessage.show(
+          context,
+          'Erro ao selecionar ou enviar imagem.',
+          title: 'Erro de Seleção',
         );
       }
     }

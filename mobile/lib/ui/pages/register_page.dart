@@ -97,7 +97,18 @@ class _RegisterPageState extends State<RegisterPage> {
                             SecondaryButton(
                               onPressed: vm.isLocationLoading
                                   ? null
-                                  : vm.getLocation,
+                                  : () async {
+                                      final registerViewModel = context.read<LoginViewModel>();
+                                      await registerViewModel.getLocation();
+                                      final error = registerViewModel.errorMessage;
+                                      if (context.mounted && error != null) {
+                                        SlackMessage.show(
+                                          context,
+                                          error,
+                                          title: 'Erro de Localização',
+                                        );
+                                      }
+                                    },
                               text: vm.isLocationLoading
                                   ? 'OBTENDO LOCALIZAÇÃO...'
                                   : 'OBTER LOCALIZAÇÃO',
@@ -110,48 +121,26 @@ class _RegisterPageState extends State<RegisterPage> {
                               prefixIcon: LucideIcons.home,
                               validator: locationValidator,
                             ),
-                            if (vm.errorMessage != null)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Container(
-                                  padding: const EdgeInsets.all(12.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.red.withOpacity(0.5),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        LucideIcons.alertCircle,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          vm.errorMessage!,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+
                             PrimaryButton(
                               onPressed: vm.isLoading
                                   ? null
                                   : () async {
-                                      if (await vm.register(_formKey)) {
+                                      final registerViewModel = context.read<LoginViewModel>();
+                                      if (await registerViewModel.register(_formKey)) {
                                         if (context.mounted) {
                                           Navigator.pushReplacementNamed(
                                             context,
                                             '/home',
+                                          );
+                                        }
+                                      } else {
+                                        final error = registerViewModel.errorMessage;
+                                        if (context.mounted && error != null) {
+                                          SlackMessage.show(
+                                            context,
+                                            error,
+                                            title: 'Erro de Cadastro',
                                           );
                                         }
                                       }

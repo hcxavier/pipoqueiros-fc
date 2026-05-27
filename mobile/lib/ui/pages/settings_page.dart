@@ -94,6 +94,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     const SizedBox(height: 4),
                     SecondaryButton(
+                      text: 'TESTAR MENSAGEM SLACK',
+                      icon: LucideIcons.bell,
+                      onPressed: () {
+                        SlackMessage.show(
+                          context,
+                          'Esta é uma mensagem de erro simulada com estilo do Slack!',
+                          title: 'Erro de Teste',
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 4),
+                    SecondaryButton(
                       text: 'SAIR DA CONTA',
                       icon: LucideIcons.logOut,
                       exit: true,
