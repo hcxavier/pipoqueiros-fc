@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/ui/pages/qrScanner.dart';
+import 'package:mobile/ui/pages/qr_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/ui/view_models/search_betting_group_view_model.dart';
