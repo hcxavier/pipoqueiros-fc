@@ -72,5 +72,7 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Este aplicativo precisa de acesso à câmera para ler QR Codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Este aplicativo precisa de acesso à galeria de fotos para permitir alterar a foto de perfil.</string>
 </dict>
 </plist>

@@ -29,6 +29,11 @@ class AvatarPerfil extends StatelessWidget {
     return _hasImagePath && imagePath!.startsWith('assets/');
   }
 
+  bool get _isNetwork {
+    return _hasImagePath &&
+        (imagePath!.startsWith('http://') || imagePath!.startsWith('https://'));
+  }
+
   bool get _hasImagePath {
     return imagePath != null && imagePath!.trim().isNotEmpty;
   }
@@ -79,15 +84,24 @@ class AvatarPerfil extends StatelessWidget {
             ),
             child: ClipOval(
              child: _hasImagePath
-              ? (_isAsset ? Image.asset(
-                  imagePath!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _buildFallback(),
-                ): Image.file(
-                  File(imagePath!),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _buildFallback(),
-                )
+              ? (_isNetwork
+                  ? Image.network(
+                      imagePath!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                    )
+                  : (_isAsset
+                      ? Image.asset(
+                          imagePath!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                        )
+                      : Image.file(
+                          File(imagePath!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                        )
+                    )
               ) : _buildFallback(),
             ),
           ),

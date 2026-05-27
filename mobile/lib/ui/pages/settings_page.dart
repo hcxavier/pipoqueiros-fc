@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:mobile/ui/view_models/settings_view_model.dart';
 import 'package:mobile/components/widgets.dart';
+import 'package:mobile/constants/styles.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -35,11 +36,30 @@ class _SettingsPageState extends State<SettingsPage> {
                   spacing: 6,
                   children: [
                     const SizedBox(height: 24),
-                    AvatarPerfil(
-                      size: 148,
-                      name: vm.profile['name'],
-                      imagePath: vm.profile['imagePath'],
-                      onEditTap: vm.editProfile,
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        AvatarPerfil(
+                          size: 148,
+                          name: vm.profile['name'],
+                          imagePath: vm.profile['imagePath'],
+                          onEditTap: vm.isUploading ? null : () => vm.editProfile(context),
+                        ),
+                        if (vm.isUploading)
+                          Positioned.fill(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black54,
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.yellowPrimary,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 48),
                     BettingGroupParticipantsCard(
