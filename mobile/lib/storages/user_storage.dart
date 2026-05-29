@@ -5,22 +5,16 @@ class UserStorage {
   final _localStorage = LocalStorage();
 
   // Secure Storage (Tokens)
-  Future<void> saveTokens(String accessToken, String refreshToken) async {
+  Future<void> saveTokens(String accessToken) async {
     await _localStorage.writeSecure('access_token', accessToken);
-    await _localStorage.writeSecure('refresh_token', refreshToken);
   }
 
   Future<String?> getAccessToken() async {
     return await _localStorage.readSecure('access_token');
   }
 
-  Future<String?> getRefreshToken() async {
-    return await _localStorage.readSecure('refresh_token');
-  }
-
   Future<void> deleteTokens() async {
     await _localStorage.deleteSecure('access_token');
-    await _localStorage.deleteSecure('refresh_token');
   }
 
   // Isar Storage (Configurações)

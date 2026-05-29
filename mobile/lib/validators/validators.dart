@@ -21,6 +21,16 @@ String? validatePassword(String? value) {
   return null;
 }
 
+String? validateConfirmPassword(String? value, String? password) {
+  if (value == null || value.isEmpty) {
+    return 'A confirmação de senha não pode estar vazia.';
+  }
+  if (value != password) {
+    return 'As senhas não coincidem.';
+  }
+  return null;
+}
+
 String? validateEmail(String? value) {
   if (value == null || value.trim().isEmpty) {
     return 'O e-mail não pode estar vazio.';
@@ -34,6 +44,20 @@ String? validateEmail(String? value) {
 String? nameBettingGroupValidator(String? value) {
   if (value == null || value.trim().isEmpty || value.length < 3) {
     return 'O nome deve ter pelo menos 3 caracteres.';
+  }
+  return null;
+}
+
+String? nameBettingGroupSearchValidator(String? value) {
+  if (value == null || value.trim().isEmpty || value.length < 3) {
+    return 'O nome do bolão não pode estar vazio.';
+  }
+  return null;
+}
+
+String? locationValidator(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'A localização não pode estar vazia.';
   }
   return null;
 }

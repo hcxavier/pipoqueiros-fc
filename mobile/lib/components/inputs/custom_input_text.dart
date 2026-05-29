@@ -47,18 +47,29 @@ class CustomInputText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 24) : null,
-        suffixIcon: _buildSuffixIcon(),
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      validator: validator,
-      inputFormatters: inputFormatter != null ? [inputFormatter!] : null,
-      textAlign: TextAlign.left,
-      obscureText: isObscure,
-      keyboardType: keyboardType,
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 24) : null,
+          suffixIcon: _buildSuffixIcon(),
+        ),
+        validator: validator,
+        inputFormatters: inputFormatter != null ? [inputFormatter!] : null,
+        textAlign: TextAlign.left,
+        obscureText: isObscure,
+        keyboardType: keyboardType,
+      ),
     );
   }
 }

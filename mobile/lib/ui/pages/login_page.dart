@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:mobile/validators/validators.dart';
-import 'package:provider/provider.dart';
-import '../../components/widgets.dart';
+import 'package:mobile/components/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -74,20 +74,43 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: LucideIcons.lock,
                               validator: validatePassword,
                             ),
+
                             PrimaryButton(
-                              onPressed: () async => {
-                                if (await vm.login(_formKey))
-                                  {
+                              onPressed: vm.isLoading
+                                  ? null
+                                  : () async {
+                                      final loginViewModel = context.read<LoginViewModel>();
+                                      if (await loginViewModel.login(_formKey)) {
+                                        if (context.mounted) {
+                                          Navigator.pushReplacementNamed(
+                                            context,
+                                            '/home',
+                                          );
+                                        }
+                                      } else {
+                                        final error = loginViewModel.errorMessage;
+                                        if (context.mounted && error != null) {
+                                          SlackMessage.show(
+                                            context,
+                                            error,
+                                            title: 'Erro de Conexão',
+                                          );
+                                        }
+                                      }
+                                    },
+                              text: vm.isLoading ? 'ENTRANDO...' : 'ENTRAR',
+                            ),
+                            GoogleButton(
+                              onPressed: () async {
+                                if (await vm.googleLogin()) {
+                                  if (context.mounted) {
                                     Navigator.pushReplacementNamed(
                                       context,
                                       '/home',
-                                    ),
-                                  },
+                                    );
+                                  }
+                                }
                               },
-                              text: 'ENTRAR',
-                            ),
-                            GoogleButton(
-                              onPressed: vm.googleLogin,
                               text: 'ENTRAR COM GOOGLE',
                             ),
                             SizedBox(height: 12),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/components/custom_widgets/app_bar_top.dart';
-import 'package:mobile/components/custom_widgets/icons_home.dart';
-import 'package:mobile/components/widgets.dart';
-import 'package:mobile/constants/styles.dart';
-import 'package:mobile/ui/view_models/new_betting_group_view_model.dart';
-import 'package:mobile/validators/validators.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:mobile/ui/view_models/new_betting_group_view_model.dart';
+import 'package:mobile/constants/styles.dart';
+import 'package:mobile/validators/validators.dart';
+import 'package:mobile/components/widgets.dart';
 
 class NewBettingGroupPage extends StatefulWidget {
   const NewBettingGroupPage({super.key});
@@ -55,28 +53,28 @@ class _NewBettingGroupPageState extends State<NewBettingGroupPage> {
                             controller: vm.nameController,
                             hintText: 'Qual nome do seu bolão?',
                             keyboardType: TextInputType.text,
-                            validator: (value) {
-                              return nameBettingGroupValidator(value);
-                            },
+                            validator: nameBettingGroupValidator,
                           ),
                           const SizedBox(height: 16),
                           PrimaryButton(
                             text: 'CRIAR MEU BOLÃO',
+                            isLoading: vm.isLoading,
                             onPressed: () async {
-                              if (await vm.createGroup(_formKey)) {
-                                // ignore: use_build_context_synchronously
-                                Navigator.pop(context);
+                              if (!_formKey.currentState!.validate()) {
+                                return;
                               }
+                              final bettingGroupId = await vm.createGroup();
+                              if (bettingGroupId == null) {
+                                return;
+                              }
+                              Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
                             },
                           ),
                           const SizedBox(height: 32),
                           Text(
                             'Após criar seu bolão, você receberá um\ncódigo único que poderá usar para convidar\noutras pessoas.',
                             textAlign: TextAlign.center,
-                            style: AppFonts.caption.copyWith(
-                              color: Colors.white.withOpacity(0.7),
-                              height: 1.5,
-                            ),
+                            style: AppFonts.caption.copyWith(height: 1.5),
                           ),
                           const SizedBox(height: 24),
                         ],

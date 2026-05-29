@@ -1,5 +1,6 @@
 .env
 
+
 # Flutter ignores
 build/
 mobile/android/app/google-services.json
@@ -12,3 +13,6 @@ mobile/pubspec.lock
 # api
 api/generated/
 api/.env
+
+.antigravitycli/
+api/dist/

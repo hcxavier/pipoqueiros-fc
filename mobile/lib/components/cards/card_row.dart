@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/constants/styles.dart';
 
 class CardRow extends StatelessWidget {
   final String text;
@@ -19,14 +20,21 @@ class CardRow extends StatelessWidget {
     return Container(
       // Fundo amarelo que servirá como a "borda" inferior
       decoration: BoxDecoration(
-        color: const Color(0xFFFFD700), // Amarelo vibrante
+        boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        color: AppColors.brandYellow, // Amarelo vibrante
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.only(bottom: 3.0), // Espessura da linha
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         decoration: BoxDecoration(
-          color: const Color(0xFF202024), // Cinza escuro de fundo
+          color: AppColors.bgSecondary, // Cinza escuro / Branco dinâmico
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -44,8 +52,8 @@ class CardRow extends StatelessWidget {
                 children: [
                   Text(
                     text,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -55,8 +63,8 @@ class CardRow extends StatelessWidget {
                   const SizedBox(height: 4.0),
                   Text(
                     infoText,
-                    style: const TextStyle(
-                      color: Color(0xFFA1A1AA), // Cinza claro
+                    style: TextStyle(
+                      color: AppColors.textSecondary, // Cinza claro
                       fontSize: 14.0,
                     ),
                   ),

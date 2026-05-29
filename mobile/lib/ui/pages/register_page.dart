@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:mobile/components/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/ui/view_models/login_view_model.dart';
 import 'package:mobile/validators/validators.dart';
-import 'package:provider/provider.dart';
+import 'package:mobile/components/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,54 +24,163 @@ class _RegisterPageState extends State<RegisterPage> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Builder(
           builder: (context) {
-          final vm = context.watch<LoginViewModel>();
+            final vm = context.watch<LoginViewModel>();
             return Scaffold(
               body: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 36.0, bottom: 24.0),
-                    child: SvgPicture.asset('assets/logo/logo.svg', width: 120, height: 120),
+                    padding: const EdgeInsets.only(
+                      left: 24.0,
+                      right: 24.0,
+                      top: 36.0,
+                      bottom: 24.0,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/logo/logo.svg',
+                      width: 120,
+                      height: 120,
+                    ),
                   ),
                   Expanded(
                     child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+                      behavior: ScrollConfiguration.of(
+                        context,
+                      ).copyWith(overscroll: false),
                       child: SingleChildScrollView(
                         physics: const ClampingScrollPhysics(),
-                        padding: const EdgeInsets.only(top:0.0, left: 24.0, right: 24.0, bottom: 24.0),
+                        padding: const EdgeInsets.only(
+                          top: 0.0,
+                          left: 24.0,
+                          right: 24.0,
+                          bottom: 24.0,
+                        ),
                         child: CardLogin(
                           formKey: _formKey,
                           children: [
-                            CustomInputText(controller: vm.nameController, hintText: 'Nome', keyboardType: TextInputType.text,
-                              prefixIcon: LucideIcons.user, validator: validateName,
+                            CustomInputText(
+                              controller: vm.nameController,
+                              hintText: 'Nome',
+                              keyboardType: TextInputType.text,
+                              prefixIcon: LucideIcons.user,
+                              validator: validateName,
                             ),
-                            CustomInputText(controller: vm.emailController, hintText: 'E-mail', keyboardType: TextInputType.emailAddress,
-                              prefixIcon: LucideIcons.mail, validator: validateEmail,
+                            CustomInputText(
+                              controller: vm.emailController,
+                              hintText: 'E-mail',
+                              keyboardType: TextInputType.emailAddress,
+                              prefixIcon: LucideIcons.mail,
+                              validator: validateEmail,
                             ),
-                            CustomInputText(controller: vm.passwordController, isObscure: vm.isObscure, onToggle: vm.togglePasswordVisibility, hintText: 'Senha', keyboardType: TextInputType.text, isPassword: true,
-                              prefixIcon: LucideIcons.lock, validator: validatePassword,
+                            CustomInputText(
+                              controller: vm.passwordController,
+                              isObscure: vm.isObscure,
+                              onToggle: vm.togglePasswordVisibility,
+                              hintText: 'Senha',
+                              keyboardType: TextInputType.text,
+                              isPassword: true,
+                              prefixIcon: LucideIcons.lock,
+                              validator: validatePassword,
                             ),
-                            CustomInputText(controller: vm.passwordController, isObscure: vm.isObscure, onToggle: vm.togglePasswordVisibility, hintText: 'Confirme sua senha', keyboardType: TextInputType.text, isPassword: true,
-                              prefixIcon: LucideIcons.checkCheck, validator: validatePassword,
+                            CustomInputText(
+                              controller: vm.confirmPasswordController,
+                              isObscure: vm.isObscureConfirmation,
+                              onToggle: vm.toggleConfirmPasswordVisibility,
+                              hintText: 'Confirme sua senha',
+                              keyboardType: TextInputType.text,
+                              isPassword: true,
+                              prefixIcon: LucideIcons.checkCheck,
+                              validator: (value) => validateConfirmPassword(
+                                value,
+                                vm.passwordController.text,
+                              ),
                             ),
-                            SecondaryButton(onPressed: () => {}, text: 'OBTER LOCALIZAÇÃO', icon: LucideIcons.mapPin),
-                            CustomInputText(controller: vm.nameController, hintText: 'Seu estado e cidade', keyboardType: TextInputType.text,
-                              prefixIcon: LucideIcons.home, validator: validateName,
+                            SecondaryButton(
+                              onPressed: vm.isLocationLoading
+                                  ? null
+                                  : () async {
+                                      final registerViewModel = context.read<LoginViewModel>();
+                                      await registerViewModel.getLocation();
+                                      final error = registerViewModel.errorMessage;
+                                      if (context.mounted && error != null) {
+                                        SlackMessage.show(
+                                          context,
+                                          error,
+                                          title: 'Erro de Localização',
+                                        );
+                                      }
+                                    },
+                              text: vm.isLocationLoading
+                                  ? 'OBTENDO LOCALIZAÇÃO...'
+                                  : 'OBTER LOCALIZAÇÃO',
+                              icon: LucideIcons.mapPin,
                             ),
-                            PrimaryButton(onPressed: () async => { if (await vm.register(_formKey)) { Navigator.pushNamed(context, '/home')} }, text: 'CADASTRAR'),
-                            GoogleButton(onPressed: vm.googleLogin, text: 'CADASTRAR COM GOOGLE'),
+                            CustomInputText(
+                              controller: vm.locationController,
+                              hintText: 'Seu estado e cidade',
+                              keyboardType: TextInputType.text,
+                              prefixIcon: LucideIcons.home,
+                              validator: locationValidator,
+                            ),
+
+                            PrimaryButton(
+                              onPressed: vm.isLoading
+                                  ? null
+                                  : () async {
+                                      final registerViewModel = context.read<LoginViewModel>();
+                                      if (await registerViewModel.register(_formKey)) {
+                                        if (context.mounted) {
+                                          Navigator.pushReplacementNamed(
+                                            context,
+                                            '/home',
+                                          );
+                                        }
+                                      } else {
+                                        final error = registerViewModel.errorMessage;
+                                        if (context.mounted && error != null) {
+                                          SlackMessage.show(
+                                            context,
+                                            error,
+                                            title: 'Erro de Cadastro',
+                                          );
+                                        }
+                                      }
+                                    },
+                              text: vm.isLoading
+                                  ? 'CADASTRANDO...'
+                                  : 'CADASTRAR',
+                            ),
+                            GoogleButton(
+                              onPressed: () async {
+                                if (await vm.googleLogin()) {
+                                  if (context.mounted) {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/home',
+                                    );
+                                  }
+                                }
+                              },
+                              text: 'CADASTRAR COM GOOGLE',
+                            ),
                             SizedBox(height: 0),
-                            ActionText(simpleText: 'Já possui uma conta? ', actionText: 'Entre agora', onPressed: () => {Navigator.pushNamed(context, '/')}),
-                          ]
+                            ActionText(
+                              simpleText: 'Já possui uma conta? ',
+                              actionText: 'Entre agora',
+                              onPressed: () => {
+                                Navigator.pushNamed(context, '/'),
+                              },
+                            ),
+                          ],
                         ),
-                      )
-                    )
-                  )
+                      ),
+                    ),
+                  ),
                 ],
-              )
+              ),
             );
-          }
+          },
         ),
-      )
+      ),
     );
   }
 }

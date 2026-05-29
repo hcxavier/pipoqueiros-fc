@@ -1,0 +1,26 @@
+name: Sincronizar pasta API para repositório isolado
+
+on:
+    push:
+        branches:
+            - api
+        paths:
+            - "api/**" # A action só vai rodar se houver alteração dentro da pasta /api
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Fazer o Checkout do código fonte
+              uses: actions/checkout@v4
+
+            - name: Enviar pasta /api para o outro repositório
+              uses: cpina/github-action-push-to-another-repository@main
+              env:
+                  API_TOKEN_GITHUB: ${{ secrets.API_REPO_TOKEN }}
+              with:
+                  source-directory: "api" # A pasta que será copiada
+                  destination-github-username: "emerss001" # Substitua pelo seu usuário do GitHub
+                  destination-repository-name: "pipoqueirosFC-API" # Substitua pelo nome do novo repo da API
+                  user-email: "emersonnevess80@gmail.com" # O email que vai aparecer no commit de transferência
+                  target-branch: "main"

@@ -1,21 +1,86 @@
 import Fastify from "fastify";
+import { fromNodeHeaders } from "better-auth/node";
 import { usersRoute } from "./routes/users.route";
 import { bettingGroupRoute } from "./routes/betting-group.route";
 import { predicationRoute } from "./routes/predication.route";
 import { matchRoute } from "./routes/match.route";
 import { teamRoute } from "./routes/team.route";
 import { systemRoute } from "./routes/system.route";
-import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "@fastify/cors";
+import fastifyMultipart from "@fastify/multipart";
+import fastifySwagger from "@fastify/swagger";
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import fastifyApiReference from "@scalar/fastify-api-reference";
+import { startMaestroCron } from "./crons/maestro-cron";
+import { planWeeklySetup } from "./service/weekly-setup.service";
 
 const app = Fastify({
     logger: true,
 });
 
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
+
 app.register(cors, {
     origin: "*",
     credentials: true,
+});
+
+app.register(fastifyMultipart, {
+    limits: {
+        fileSize: 18 * 1024 * 1024, // 18MB limit
+    },
+});
+
+app.get("/swagger.json", async () => {
+    return app.swagger();
+});
+
+app.register(fastifySwagger, {
+    openapi: {
+        info: {
+            title: "PipoqueirosFC API",
+            description: "API para o aplicativo PipoqueirosFC",
+            version: "1.0.0",
+        },
+
+        servers: [
+            {
+                description: "Localhost",
+                url: "http://localhost:3333",
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+    },
+
+    transform: jsonSchemaTransform,
+});
+
+app.register(fastifyApiReference, {
+    routePrefix: "/api-docs",
+    configuration: {
+        sources: [
+            {
+                title: "PipoqueirosFC API",
+                slug: "pipoqueiros-fc-api",
+                url: "/swagger.json",
+            },
+            {
+                title: "Better Auth",
+                slug: "better-auth-api",
+                url: "/api/auth/open-api/generate-schema",
+            },
+        ],
+    },
 });
 
 app.get("/", async () => {
@@ -35,7 +100,7 @@ app.all("/api/auth/*", async (request, reply) => {
     const req = new Request(url, {
         method: request.method,
         // O TypeScript pode pedir um cast aqui dependendo da sua versão
-        headers: request.headers as HeadersInit,
+        headers: fromNodeHeaders(request.headers),
         body,
     });
 
@@ -60,6 +125,16 @@ app.register(matchRoute);
 app.register(teamRoute);
 app.register(systemRoute);
 
+// ATENÇÃO: Chamada forçada apenas para testar e popular o banco de dados agora.
+// Numa situação real, o Turnover via maestro cuidaria do planWeeklySetup.
+// console.log("🛠️  [DEBUG] Disparando planWeeklySetup manualmente na inicialização...");
+// planWeeklySetup().then(() => {
+//     console.log("🛠️  [DEBUG] Setup manual finalizado. O Maestro vai assumir daqui em diante.");
+// });
+
+startMaestroCron();
+
 app.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
     console.log("Server running on http://localhost:3333");
+    console.log("------ versão última do código 1.0.3 ------");
 });

@@ -5,12 +5,14 @@ class BuildTabButton extends StatelessWidget {
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isSmall;
 
   const BuildTabButton({
     super.key,
     required this.title,
     required this.isSelected,
     required this.onTap,
+    this.isSmall = false,
   });
 
   @override
@@ -20,14 +22,16 @@ class BuildTabButton extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.borderPrimary : Colors.transparent,
+            color: isSelected ? isSmall ? AppColors.yellowPrimary : AppColors.borderPrimary : Colors.transparent,
             borderRadius: BorderRadius.circular(4),
           ),
           alignment: Alignment.center,
           child: Text(
             title,
             style: TextStyle(
-              color: Colors.white,
+              color: isSelected 
+                  ? (isSmall ? AppColors.black : AppColors.textPrimary) 
+                  : AppColors.textSecondary,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 14,
             ),

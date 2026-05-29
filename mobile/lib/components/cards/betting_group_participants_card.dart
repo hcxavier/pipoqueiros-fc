@@ -25,6 +25,13 @@ class BettingGroupParticipantsCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
           color: AppColors.bgSecondary,
           borderRadius: BorderRadius.circular(4),
           border: const Border(
@@ -42,8 +49,8 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -52,7 +59,7 @@ class BettingGroupParticipantsCard extends StatelessWidget {
                   Text(
                     content,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.textSecondary.withValues(alpha: 0.6),
                       fontSize: 14,
                     ),
                   ),

@@ -1,26 +1,35 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { addUserToBettingGroupParams, createBettingGroupParams } from "../types/betting-group-types";
+import { getUser } from "../helpers/get-user";
+import { SuccessResponse, ErrorResponse } from "../types/api-response";
 import {
     addUserToBettingGroupService,
     createBettingGroupService,
     findBettingGroupByCodeService,
     getBettingGroupRankingService,
-    getBettingGroupParticipantsService,
+    getUserBettingGroupsService,
 } from "../service/betting-group.service";
 
-export async function createBettingGroupController(request: FastifyRequest, reply: FastifyReply) {
-    const { name, creatorId } = request.body as createBettingGroupParams;
+import { AppError } from "../errors/app-error";
 
-    if (!name || !creatorId) {
-        return reply.status(400).send({ error: "Name and Creator ID are required" });
+export async function createBettingGroupController(request: FastifyRequest, reply: FastifyReply) {
+    const { name } = request.body as { name: string };
+    const user = getUser(request);
+    const creatorId = user.id;
+
+    if (!name) {
+        return reply.status(400).send(new ErrorResponse(400, "O nome do bolão é obrigatório"));
     }
 
     try {
-        const bettingGroup = await createBettingGroupService({ name, creatorId });
-        return reply.status(201).send(bettingGroup);
+        const bettingGroup = await createBettingGroupService(name, creatorId);
+        return reply.status(201).send(new SuccessResponse(201, "Bolão criado com sucesso", bettingGroup));
     } catch (error) {
         console.error("Error creating betting group:", error);
-        return reply.status(500).send({ error: "An error occurred while creating the betting group" });
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
+        }
+
+        return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao criar o bolão"));
     }
 }
 
@@ -28,79 +37,88 @@ export async function findBettingGroupByCodeController(request: FastifyRequest, 
     const { code } = request.params as { code: string };
 
     if (!code) {
-        return reply.status(400).send({ error: "Code is required" });
+        return reply.status(400).send(new ErrorResponse(400, "O código do bolão é obrigatório"));
     }
 
     try {
         const bettingGroup = await findBettingGroupByCodeService(code);
 
         if (!bettingGroup) {
-            return reply.status(404).send({ error: "Betting group not found" });
+            return reply.status(404).send(new ErrorResponse(404, "Bolão não encontrado"));
         }
 
-        return reply.status(200).send(bettingGroup);
+        return reply.status(200).send(new SuccessResponse(200, "Bolão encontrado", bettingGroup));
     } catch (error) {
         console.error("Error finding betting group by code:", error);
-        return reply.status(500).send({ error: "An error occurred while finding the betting group" });
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
+        }
+
+        return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao buscar o bolão"));
     }
 }
 
 export async function addUserToBettingGroupController(request: FastifyRequest, reply: FastifyReply) {
-    const { userId, bettingGroupId } = request.body as addUserToBettingGroupParams;
+    const user = getUser(request);
+    const userId = user.id;
+    const { bettingGroupCode } = request.body as { bettingGroupCode: string };
 
-    if (!userId || !bettingGroupId) {
-        return reply.status(400).send({ error: "User ID and Betting Group ID are required" });
+    if (!bettingGroupCode) {
+        return reply.status(400).send(new ErrorResponse(400, "O código do bolão é obrigatório"));
     }
 
     try {
-        await addUserToBettingGroupService({ userId, bettingGroupId });
-        return reply.status(200).send({ message: "User added to betting group successfully" });
+        await addUserToBettingGroupService(userId, bettingGroupCode);
+        return reply.status(200).send(new SuccessResponse(200, "Usuário adicionado ao bolão com sucesso", null));
     } catch (error: any) {
         console.error("Error adding user to betting group:", error);
-        if (error.message === "User already in betting group") {
-            return reply.status(409).send({ error: error.message });
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
         }
-        if (error.message === "Betting group not found") {
-            return reply.status(404).send({ error: error.message });
-        }
-        return reply.status(500).send({ error: "An error occurred while adding the user to the betting group" });
+
+        return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao adicionar o usuário ao bolão"));
     }
 }
 
 export async function getBettingGroupRankingController(request: FastifyRequest, reply: FastifyReply) {
-    const { idOrCode } = request.params as { idOrCode: string };
+    const { code } = request.params as { code: string };
 
-    if (!idOrCode) {
-        return reply.status(400).send({ error: "Betting Group ID or Code is required" });
+    if (!code) {
+        return reply.status(400).send(new ErrorResponse(400, "O código do grupo é obrigatório"));
     }
 
     try {
-        const ranking = await getBettingGroupRankingService(idOrCode);
-        return reply.status(200).send(ranking);
+        const ranking = await getBettingGroupRankingService(code);
+        return reply.status(200).send(new SuccessResponse(200, "Ranking fetched successfully", ranking));
     } catch (error: any) {
         console.error("Error fetching betting group ranking:", error);
-        if (error.message === "Betting group not found") {
-            return reply.status(404).send({ error: error.message });
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
         }
-        return reply.status(500).send({ error: "An error occurred while fetching the ranking" });
+
+        return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao buscar o ranking do bolão"));
     }
 }
 
-export async function getBettingGroupParticipantsController(request: FastifyRequest, reply: FastifyReply) {
-    const { idOrCode } = request.params as { idOrCode: string };
+export async function getUserBettingGroupsController(request: FastifyRequest, reply: FastifyReply) {
+    const user = getUser(request);
+    const id = user.id;
 
-    if (!idOrCode) {
-        return reply.status(400).send({ error: "Betting Group ID or Code is required" });
+    if (!id) {
+        return reply.status(400).send(new ErrorResponse(400, "O ID do usuário é obrigatório"));
     }
 
     try {
-        const participants = await getBettingGroupParticipantsService(idOrCode);
-        return reply.status(200).send(participants);
-    } catch (error: any) {
-        console.error("Error fetching betting group participants:", error);
-        if (error.message === "Betting group not found") {
-            return reply.status(404).send({ error: error.message });
+        const bettingGroups = await getUserBettingGroupsService(id);
+        return reply
+            .status(200)
+            .send(new SuccessResponse(200, "Bolões do usuário encontrados com sucesso", bettingGroups));
+    } catch (error) {
+        console.error("Error fetching user betting groups:", error);
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send(new ErrorResponse(error.statusCode, error.message));
         }
-        return reply.status(500).send({ error: "An error occurred while fetching the participants" });
+
+        return reply.status(500).send(new ErrorResponse(500, "Ocorreu um erro ao buscar os bolões do usuário"));
     }
 }

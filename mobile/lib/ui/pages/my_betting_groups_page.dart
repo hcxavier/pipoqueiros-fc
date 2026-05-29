@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:mobile/components/cards/betting_group_participants_card.dart';
-import 'package:mobile/components/custom_widgets/avatar_stack.dart';
-import 'package:mobile/components/widgets.dart';
-import 'package:mobile/components/custom_widgets/app_bar_top.dart';
-import 'package:mobile/constants/styles.dart';
-import 'package:mobile/ui/view_models/my_betting_groups_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:mobile/ui/view_models/my_betting_groups_view_model.dart';
+import 'package:mobile/constants/styles.dart';
+import 'package:mobile/validators/validators.dart';
+import 'package:mobile/components/widgets.dart';
 
-class MyBettingGroupsPage extends StatelessWidget {
+class MyBettingGroupsPage extends StatefulWidget {
   const MyBettingGroupsPage({super.key});
+
+  @override
+  State<MyBettingGroupsPage> createState() => _MyBettingGroupsPageState();
+}
+
+class _MyBettingGroupsPageState extends State<MyBettingGroupsPage> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,51 +36,32 @@ class MyBettingGroupsPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 24),
-
-                      // input de Busca
-                      CustomInputText(
-                        controller: vm.searchController,
-                        hintText: 'Qual o nome do bolão?',
-                        keyboardType: TextInputType.text,
-                        prefixIcon: LucideIcons.users,
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            CustomInputText(
+                              controller: vm.searchController,
+                              hintText: 'Qual o nome do bolão?',
+                              keyboardType: TextInputType.text,
+                              prefixIcon: LucideIcons.users,
+                              validator: nameBettingGroupSearchValidator,
+                            ),
+                            const SizedBox(height: 16),
+                            PrimaryButton(
+                              text: 'BUSCAR BOLÃO PELO NOME',
+                              icon: LucideIcons.search,
+                              onPressed: () {
+                                vm.searchBettingGroups(_formKey);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-
-                      const SizedBox(height: 16),
-
-                      PrimaryButton(
-                        text: 'BUSCAR BOLÃO PELO NOME',
-                        icon: LucideIcons.search,
-                        onPressed: () {
-                          // TODO: Usar vm.searchController.text para filtrar a lista
-                          print('Buscando por: ${vm.searchController.text}');
-                        },
-                      ),
-
-                      const Divider(color: Color(0xFF202024), thickness: 1),
-
-                      const SizedBox(height: 24),
-
-                      // lista de Bolões
-                      Expanded(
-                        child: vm.isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.yellowPrimary,
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: vm.myGroups.length,
-                                itemBuilder: (context, index) {
-                                  final group = vm.myGroups[index];
-                                  return BettingGroupParticipantsCard(
-                                    title: group['title'],
-                                    content: 'Criado por ${group['creator']}',
-                                    suffix: AvatarStack(imageUrls: group['avatars'], additionalCount: group['additionalCount']),
-                                    onTap: () {Navigator.pushNamed(context, '/detail-betting-group');},
-                                  );
-                                },
-                              ),
-                      ),
+                      const SizedBox(height: 8),
+                      const Divider(thickness: 1),
+                      const SizedBox(height: 8),
+                      Expanded(child: _buildContent(vm)),
                     ],
                   );
                 },
@@ -83,6 +69,43 @@ class MyBettingGroupsPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildContent(MyBettingGroupsViewModel vm) {
+    if (vm.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.yellowPrimary),
+      );
+    }
+    if (vm.myGroups.isEmpty) {
+      return Center(
+        child: Text(
+          'Nenhum bolão encontrado.',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: vm.myGroups.length,
+      itemBuilder: (context, index) =>
+          _buildGroupCard(context, vm.myGroups[index]),
+    );
+  }
+
+  Widget _buildGroupCard(BuildContext context, Map<String, dynamic> group) {
+    return BettingGroupParticipantsCard(
+      title: group['title'],
+      content: 'Criado por ${group['creator']}',
+      suffix: AvatarStack(
+        imageUrls: List<String>.from(group['avatars'] ?? []),
+        additionalCount: group['additionalCount'] ?? 0,
+      ),
+      onTap: () => Navigator.pushNamed(
+        context,
+        '/detail-betting-group',
+        arguments: group['code'] ?? group['id'].toString(),
       ),
     );
   }

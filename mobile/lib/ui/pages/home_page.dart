@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile/components/widgets.dart';
-import 'package:mobile/ui/pages/betting_group_detail_page.dart';
+import 'package:mobile/ui/view_models/home_view_model.dart';
 import 'package:mobile/ui/pages/my_betting_groups_page.dart';
+import 'package:mobile/ui/pages/ranking_page.dart';
 import 'package:mobile/ui/pages/new_betting_group.dart';
 import 'package:mobile/ui/pages/search_betting_group.dart';
 import 'package:mobile/ui/pages/settings_page.dart';
-import 'package:mobile/ui/view_models/home_view_model.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 1);
+    _pageController = PageController(initialPage: 2);
   }
 
   @override
@@ -46,6 +46,7 @@ class _HomePageState extends State<HomePage> {
               },
               children: [
                 const NewBettingGroupPage(),
+                const RankingPage(),
                 const MyBettingGroupsPage(),
                 const SearchBettingGroupPage(),
                 const SettingsPage(),

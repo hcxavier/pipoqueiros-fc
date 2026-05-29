@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile/constants/styles.dart';
 
@@ -21,12 +22,45 @@ class AvatarPerfil extends StatelessWidget {
     if (name == null || name!.trim().isEmpty) {
       return '?';
     }
-
     return name!.trim()[0].toUpperCase();
   }
 
-  bool get _hasImage {
+  bool get _isAsset {
+    return _hasImagePath && imagePath!.startsWith('assets/');
+  }
+
+  bool get _isNetwork {
+    return _hasImagePath &&
+        (imagePath!.startsWith('http://') || imagePath!.startsWith('https://'));
+  }
+
+  bool get _hasImagePath {
     return imagePath != null && imagePath!.trim().isNotEmpty;
+  }
+
+  Widget _buildFallback() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.bgTertiary,
+            AppColors.bgSecondary,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          _initial,
+          style: GoogleFonts.roboto(
+            fontSize: size * 0.38,
+            fontWeight: FontWeight.w900,
+            color: AppColors.yellowPrimary,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -43,30 +77,34 @@ class AvatarPerfil extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.bgTertiary,
-                width: 4,
+                color: AppColors.yellowPrimary,
+                width: 3,
               ),
-              color: Colors.white,
+              color: AppColors.bgSecondary,
             ),
             child: ClipOval(
-              child: _hasImage
-                  ? Image.file(
-                      File(imagePath!),
+             child: _hasImagePath
+              ? (_isNetwork
+                  ? Image.network(
+                      imagePath!,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => _buildFallback(),
                     )
-                  : Center(
-                      child: Text(
-                        _initial,
-                        style: TextStyle(
-                          fontSize: size * 0.38,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2B2B2B),
-                        ),
-                      ),
-                    ),
+                  : (_isAsset
+                      ? Image.asset(
+                          imagePath!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                        )
+                      : Image.file(
+                          File(imagePath!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildFallback(),
+                        )
+                    )
+              ) : _buildFallback(),
             ),
           ),
-
           Positioned(
             top: 6,
             right: 0,
@@ -77,10 +115,10 @@ class AvatarPerfil extends StatelessWidget {
                 height: size * 0.28,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.bgTertiary,
+                  color: AppColors.yellowPrimary,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
+                      color: Colors.black.withValues(alpha: 0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -88,7 +126,7 @@ class AvatarPerfil extends StatelessWidget {
                 ),
                 child: Icon(
                   LucideIcons.edit,
-                  color: AppColors.yellowPrimary,
+                  color: AppColors.bgPrimary,
                   size: size * 0.14,
                 ),
               ),
