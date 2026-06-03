@@ -6,6 +6,7 @@ import {
     getRankingByStateService,
     GetRankingGeneralService,
 } from "../service/ranking.service";
+import { getUser } from "../helpers/get-user";
 
 export async function getRankingGeneralController(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -23,8 +24,13 @@ export async function getRankingGeneralController(request: FastifyRequest, reply
 
 export async function getRankingByStateController(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const { state } = request.params as { state: string };
-        if (state.length !== 2 || state === null || state === undefined) {
+        const user = getUser(request);
+        if (!user) {
+            return reply.status(401).send(new ErrorResponse(401, "Usuário não autenticado"));
+        }
+
+        const state = user.state;
+        if (state === null || state === undefined || state.length !== 2) {
             return reply.status(400).send(new ErrorResponse(400, "O estado deve ser representado por 2 caracteres"));
         }
 
@@ -44,7 +50,12 @@ export async function getRankingByStateController(request: FastifyRequest, reply
 
 export async function getRankingByCityController(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const { city } = request.params as { city: string };
+        const user = getUser(request);
+        if (!user) {
+            return reply.status(401).send(new ErrorResponse(401, "Usuário não autenticado"));
+        }
+
+        const city = user.city;
         if (!city || city.trim() === "") {
             return reply.status(400).send(new ErrorResponse(400, "A cidade deve ser informada"));
         }

@@ -7,6 +7,7 @@ import {
     getRankingByStateController,
     getRankingGeneralController,
 } from "../controller/ranking.controller";
+import { authMiddleware } from "../lib/auth-middleware";
 
 export async function rankingRoute(app: FastifyInstance) {
     const publicServer = app.withTypeProvider<ZodTypeProvider>();
@@ -14,6 +15,7 @@ export async function rankingRoute(app: FastifyInstance) {
     publicServer.route({
         method: "GET",
         url: "/ranking/general",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Ranking"],
             description: "Obter o ranking geral dos usuários",
@@ -40,13 +42,12 @@ export async function rankingRoute(app: FastifyInstance) {
 
     publicServer.route({
         method: "GET",
-        url: "/ranking/state/:state",
+        url: "/ranking/state/",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Ranking"],
-            description: "Obter o ranking dos usuários por estado",
-            params: z.object({
-                state: z.string().length(2, "O estado deve ser representado por 2 caracteres"),
-            }),
+            description: "[🔒 Autenticado] Obter o ranking dos usuários por estado",
+            security: [{ bearerAuth: [] }],
             response: {
                 200: z.object({
                     code: z.number(),
@@ -70,13 +71,11 @@ export async function rankingRoute(app: FastifyInstance) {
 
     publicServer.route({
         method: "GET",
-        url: "/ranking/city/:city",
+        url: "/ranking/city/",
+        preHandler: [authMiddleware],
         schema: {
             tags: ["Ranking"],
             description: "Obter o ranking dos usuários por cidade",
-            params: z.object({
-                city: z.string().min(1, "A cidade deve ser informada"),
-            }),
             response: {
                 200: z.object({
                     code: z.number(),
