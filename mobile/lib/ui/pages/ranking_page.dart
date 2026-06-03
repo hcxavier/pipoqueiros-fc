@@ -16,7 +16,7 @@ class _RankingPageState extends State<RankingPage> {
     return ChangeNotifierProvider(
       create: (context) {
         final vm = RankingViewModel();
-        vm.fetchRanking();
+        vm.fetchRankingForTab(0);
         return vm;
       },
       lazy: false,

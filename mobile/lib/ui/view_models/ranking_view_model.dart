@@ -6,18 +6,21 @@ class RankingViewModel extends ChangeNotifier {
 
   // State
   bool isLoading = false;
+  int selectedTabIndex = 0;
 
   final List<Map<String, dynamic>> cityRanking = [];
-
   final List<Map<String, dynamic>> stateRanking = [];
-
   final List<Map<String, dynamic>> nationalRanking = [];
 
-  int selectedTabIndex = 0;
+  // Flags para controle de requisições já feitas
+  bool _hasFetchedCity = false;
+  bool _hasFetchedState = false;
+  bool _hasFetchedNational = false;
 
   void setTab(int index) {
     selectedTabIndex = index;
     notifyListeners();
+    fetchRankingForTab(index);
   }
 
   void setLoading(bool value) {
@@ -25,24 +28,32 @@ class RankingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Metodo de obtenção do ranking
-  Future<void> fetchRanking() async {
-    setLoading(true);
-    
-    // Buscar cidade, estado e nacional concorrentemente
-    final results = await Future.wait([
-      _rankingService.getCityRanking(),
-      _rankingService.getStateRanking(),
-      _rankingService.getNationalRanking(),
-    ]);
+  Future<void> fetchRankingForTab(int index) async {
+    if (index == 0 && !_hasFetchedCity) {
+      setLoading(true);
+      final data = await _rankingService.getCityRanking();
+      _populateList(data, cityRanking);
+      _hasFetchedCity = true;
+      setLoading(false);
+    } else if (index == 1 && !_hasFetchedState) {
+      setLoading(true);
+      final data = await _rankingService.getStateRanking();
+      _populateList(data, stateRanking);
+      _hasFetchedState = true;
+      setLoading(false);
+    } else if (index == 2 && !_hasFetchedNational) {
+      setLoading(true);
+      final data = await _rankingService.getNationalRanking();
+      _populateList(data, nationalRanking);
+      _hasFetchedNational = true;
+      setLoading(false);
+    }
+  }
 
-    final cityData = results[0];
-    final stateData = results[1];
-    final nationalData = results[2];
-    
-    cityRanking.clear();
-    cityRanking.addAll(
-      cityData.map((item) {
+  void _populateList(List<dynamic> source, List<Map<String, dynamic>> target) {
+    target.clear();
+    target.addAll(
+      source.map((item) {
         return {
           'name': item['name'] ?? 'Usuário',
           'imageUrl': item['image'] ?? '',
@@ -50,29 +61,5 @@ class RankingViewModel extends ChangeNotifier {
         };
       }).toList(),
     );
-
-    stateRanking.clear();
-    stateRanking.addAll(
-      stateData.map((item) {
-        return {
-          'name': item['name'] ?? 'Usuário',
-          'imageUrl': item['image'] ?? '',
-          'points': item['totalScore'] ?? 0,
-        };
-      }).toList(),
-    );
-
-    nationalRanking.clear();
-    nationalRanking.addAll(
-      nationalData.map((item) {
-        return {
-          'name': item['name'] ?? 'Usuário',
-          'imageUrl': item['image'] ?? '',
-          'points': item['totalScore'] ?? 0,
-        };
-      }).toList(),
-    );
-
-    setLoading(false);
   }
 }
