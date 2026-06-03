@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/ui/pages/share_betting_group.dart';
 import 'package:mobile/ui/pages/splash_page.dart';
 import 'package:mobile/ui/pages/login_page.dart';
 import 'package:mobile/ui/pages/register_page.dart';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String register = '/register';
   static const String detailBettingGroup = '/detail-betting-group';
+  static const String shareBettingGroup = '/share-betting-group';
 
   static Map<String, WidgetBuilder> get routes {
     return {
@@ -22,6 +24,11 @@ class AppRoutes {
         final bettingGroupCode =
             ModalRoute.of(context)?.settings.arguments as String? ?? '';
         return BettingGroupDetailPage(bettingGroupCode: bettingGroupCode);
+      },
+      shareBettingGroup: (context) {
+        final bettingGroupCode =
+            ModalRoute.of(context)?.settings.arguments as String? ?? '';
+        return ShareBettingGroup(bettingGroupCode: bettingGroupCode);
       },
     };
   }

@@ -40,15 +40,15 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
     },
   ];
 
-  final String groupName = "Bolão do Rodrigão";
-  final String creatorName = "Rodrigo G.";
+  String groupName = "Bolão do Rodrigão";
+  String creatorName = "Rodrigo G.";
   final List<String> avatars = [
     'https://i.pravatar.cc/150?img=1',
     'https://i.pravatar.cc/150?img=2',
     'https://i.pravatar.cc/150?img=3',
     'https://i.pravatar.cc/150?img=4',
   ];
-  final int additionalCount = 38;
+  int additionalCount = 0;
 
   void setTab(int index) {
     selectedTabIndex = index;
@@ -57,7 +57,19 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
 
   Future<void> loadGroupDetails(String code) async {
     print('===> Chamando loadGroupDetails com código $code');
+    await loadDetails(code);
     await getGroupRanking(code);
+
+    avatars.clear();
+    avatars.addAll(rankingData.map((item) => item['imageUrl'] as String).where((url) => url.isNotEmpty).take(4));
+
+    if (rankingData.length > 4) {
+      additionalCount = rankingData.length - 4;
+    } else {
+      additionalCount = 0;
+    }
+
+    notifyListeners();
   }
 
   Future<void> getGroupRanking(String code) async {
@@ -76,6 +88,16 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
         };
       }).toList(),
     );
+    notifyListeners();
+  }
+
+  Future<void> loadDetails(String code) async {
+    if (code.isEmpty) return;
+    final bettingGroupDetail = await _bettingGroupService.getBettingGroupDetails(code);
+
+    groupName = bettingGroupDetail['name'] ?? 'Bolão';  
+    creatorName = bettingGroupDetail['creator']['name'] ?? 'Criador';
+    
     notifyListeners();
   }
 
