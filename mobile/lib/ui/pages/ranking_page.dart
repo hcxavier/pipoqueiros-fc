@@ -14,7 +14,12 @@ class _RankingPageState extends State<RankingPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RankingViewModel(),
+      create: (context) {
+        final vm = RankingViewModel();
+        vm.fetchRanking();
+        return vm;
+      },
+      lazy: false,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
@@ -39,7 +44,9 @@ class _RankingPageState extends State<RankingPage> {
                       Divider(thickness: 1),
                       const SizedBox(height: 12),
                       Expanded(
-                        child: switch (vm.selectedTabIndex) {
+                        child: vm.isLoading
+                            ? const Center(child: CircularProgressIndicator(color: Colors.green))
+                            : switch (vm.selectedTabIndex) {
                           0 => RankingBettingGroup(rankingData: vm.cityRanking),
                           1 => RankingBettingGroup(rankingData: vm.stateRanking),
                           2 => RankingBettingGroup(rankingData: vm.nationalRanking),

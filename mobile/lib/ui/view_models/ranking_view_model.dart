@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/services/ranking_service.dart';
 
 class RankingViewModel extends ChangeNotifier {
+  final RankingService _rankingService = RankingService();
+
   // State
   bool isLoading = false;
 
-  final List<Map<String, dynamic>> cityRanking = [
-    {'name': 'Rodrigo G.', 'points': 100, 'imageUrl': 'https://i.pravatar.cc/150?img=1'},
-    {'name': 'Maria S.', 'points': 90, 'imageUrl': 'https://i.pravatar.cc/150?img=2'},
-    {'name': 'João P.', 'points': 80, 'imageUrl': 'https://i.pravatar.cc/150?img=3'},
-    {'name': 'Ana L.', 'points': 70, 'imageUrl': 'https://i.pravatar.cc/150?img=4'},
-  ];
+  final List<Map<String, dynamic>> cityRanking = [];
 
   final List<Map<String, dynamic>> stateRanking = [
     {'name': 'Carlos M.', 'points': 100, 'imageUrl': 'https://i.pravatar.cc/150?img=5'},
@@ -48,7 +46,21 @@ class RankingViewModel extends ChangeNotifier {
   // Metodo de obtenção do ranking
   Future<void> fetchRanking() async {
     setLoading(true);
-    await Future.delayed(const Duration(seconds: 3)); // Simula uma chamada de rede
+    
+    // Buscar apenas o ranking da cidade por enquanto
+    final cityData = await _rankingService.getCityRanking();
+    
+    cityRanking.clear();
+    cityRanking.addAll(
+      cityData.map((item) {
+        return {
+          'name': item['name'] ?? 'Usuário',
+          'imageUrl': item['image'] ?? '',
+          'points': item['totalScore'] ?? 0,
+        };
+      }).toList(),
+    );
+
     setLoading(false);
   }
 }

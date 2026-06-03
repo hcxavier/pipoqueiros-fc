@@ -24,9 +24,10 @@ class RankingBettingGroup extends StatelessWidget {
               return BettingGroupParticipantsCard(
                 title: item['name'],
                 content: '${item['points']} pontos(s)',
-                prefix: CircleAvatar(
+                prefix: AvatarIcon(
                   radius: 20,
-                  backgroundImage: NetworkImage(item['imageUrl']),
+                  image: item['imageUrl'],
+                  name: item['name'],
                 ),
                 suffix: RankingIndex(index),
               );
