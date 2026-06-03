@@ -3,6 +3,7 @@ import 'package:mobile/ui/view_models/share_betting_group_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/constants/styles.dart';
 import 'package:mobile/components/widgets.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ShareBettingGroup extends StatelessWidget {
   final String bettingGroupCode;
@@ -33,11 +34,26 @@ class ShareBettingGroup extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 96),
                     Text(
                       'Escaneie o QR Code abaixo para acessar o bolão e começar a palpitar!',
                       style: AppFonts.caption,
                       textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 48),
+                    QrImageView(
+                      data: bettingGroupCode,
+                      version: QrVersions.auto,
+                      size: 250.0,
+                      backgroundColor: Colors.white,
+                      eyeStyle: const QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: Colors.black,
+                      ),
+                      dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
