@@ -17,9 +17,13 @@ class GoogleButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset('assets/logo/logo_google.svg', width: 24, height: 24),
+            SvgPicture.asset(
+              'assets/logo/logo_google.svg',
+              width: 24,
+              height: 24,
+            ),
             SizedBox(width: 10),
-            Text(text ?? '', style: AppFonts.textButton),
+            Text(text ?? '', style: AppFonts.textButtonInvert),
           ],
         ),
       ),
