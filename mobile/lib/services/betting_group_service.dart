@@ -77,6 +77,26 @@ class BettingGroupService {
     return [];
   }
 
+  Future<dynamic> getBettingGroupDetails(String groupCode) async {
+    try {
+      final response = await _api.get('/betting-groups/$groupCode');
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final data = response.data;
+      if (data == null) {
+        return null;
+      }
+      final groupDetails = data['data'];
+      return groupDetails;
+    } on DioException catch (e) {
+      print('Erro ao buscar detalhes do bolão: ${e.message}');
+    } catch (e) {
+      print('Erro inesperado ao buscar detalhes: $e');
+    }
+    return null;
+  }
+
   Future<bool> joinBettingGroup(String groupCode) async {
     try {
       final response = await _api.post('/betting-groups/add-user', 

@@ -27,6 +27,11 @@ class BettingGroupDetailPage extends StatelessWidget {
               return AppBarTop(
                 title: vm.groupName,
                 onLeftPressed: () => Navigator.pop(context),
+                onRightPressed: () => Navigator.pushNamed(
+                  context,
+                  '/share-betting-group',
+                  arguments: bettingGroupCode,
+                ),
               );
             },
           ),
