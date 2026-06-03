@@ -9,12 +9,7 @@ class RankingViewModel extends ChangeNotifier {
 
   final List<Map<String, dynamic>> cityRanking = [];
 
-  final List<Map<String, dynamic>> stateRanking = [
-    {'name': 'Carlos M.', 'points': 100, 'imageUrl': 'https://i.pravatar.cc/150?img=5'},
-    {'name': 'Fernanda R.', 'points': 90, 'imageUrl': 'https://i.pravatar.cc/150?img=6'},
-    {'name': 'Lucas T.', 'points': 80, 'imageUrl': 'https://i.pravatar.cc/150?img=7'},
-    {'name': 'Juliana C.', 'points': 70, 'imageUrl': 'https://i.pravatar.cc/150?img=8'},
-  ];
+  final List<Map<String, dynamic>> stateRanking = [];
 
   final List<Map<String, dynamic>> nationalRanking = [
     {'name': 'André L.', 'points': 100, 'imageUrl': 'https://i.pravatar.cc/150?img=9'},
@@ -47,12 +42,29 @@ class RankingViewModel extends ChangeNotifier {
   Future<void> fetchRanking() async {
     setLoading(true);
     
-    // Buscar apenas o ranking da cidade por enquanto
-    final cityData = await _rankingService.getCityRanking();
+    // Buscar cidade e estado concorrentemente
+    final results = await Future.wait([
+      _rankingService.getCityRanking(),
+      _rankingService.getStateRanking(),
+    ]);
+
+    final cityData = results[0];
+    final stateData = results[1];
     
     cityRanking.clear();
     cityRanking.addAll(
       cityData.map((item) {
+        return {
+          'name': item['name'] ?? 'Usuário',
+          'imageUrl': item['image'] ?? '',
+          'points': item['totalScore'] ?? 0,
+        };
+      }).toList(),
+    );
+
+    stateRanking.clear();
+    stateRanking.addAll(
+      stateData.map((item) {
         return {
           'name': item['name'] ?? 'Usuário',
           'imageUrl': item['image'] ?? '',
