@@ -11,20 +11,7 @@ class RankingViewModel extends ChangeNotifier {
 
   final List<Map<String, dynamic>> stateRanking = [];
 
-  final List<Map<String, dynamic>> nationalRanking = [
-    {'name': 'André L.', 'points': 100, 'imageUrl': 'https://i.pravatar.cc/150?img=9'},
-    {'name': 'Patrícia S.', 'points': 99, 'imageUrl': 'https://i.pravatar.cc/150?img=10'},
-    {'name': 'Roberto G.', 'points': 95, 'imageUrl': 'https://i.pravatar.cc/150?img=11'},
-    {'name': 'Mariana F.', 'points': 91, 'imageUrl': 'https://i.pravatar.cc/150?img=12'},
-    {'name': 'Carlos M.', 'points': 90, 'imageUrl': 'https://i.pravatar.cc/150?img=5'},
-    {'name': 'Fernanda R.', 'points': 85, 'imageUrl': 'https://i.pravatar.cc/150?img=6'},
-    {'name': 'Lucas T.', 'points': 84, 'imageUrl': 'https://i.pravatar.cc/150?img=7'},
-    {'name': 'Juliana C.', 'points': 83, 'imageUrl': 'https://i.pravatar.cc/150?img=8'},
-    {'name': 'Rodrigo G.', 'points': 82, 'imageUrl': 'https://i.pravatar.cc/150?img=1'},
-    {'name': 'Maria S.', 'points': 81, 'imageUrl': 'https://i.pravatar.cc/150?img=2'},
-    {'name': 'João P.', 'points': 80, 'imageUrl': 'https://i.pravatar.cc/150?img=3'},
-    {'name': 'Ana L.', 'points': 70, 'imageUrl': 'https://i.pravatar.cc/150?img=4'},
-  ];
+  final List<Map<String, dynamic>> nationalRanking = [];
 
   int selectedTabIndex = 0;
 
@@ -42,14 +29,16 @@ class RankingViewModel extends ChangeNotifier {
   Future<void> fetchRanking() async {
     setLoading(true);
     
-    // Buscar cidade e estado concorrentemente
+    // Buscar cidade, estado e nacional concorrentemente
     final results = await Future.wait([
       _rankingService.getCityRanking(),
       _rankingService.getStateRanking(),
+      _rankingService.getNationalRanking(),
     ]);
 
     final cityData = results[0];
     final stateData = results[1];
+    final nationalData = results[2];
     
     cityRanking.clear();
     cityRanking.addAll(
@@ -65,6 +54,17 @@ class RankingViewModel extends ChangeNotifier {
     stateRanking.clear();
     stateRanking.addAll(
       stateData.map((item) {
+        return {
+          'name': item['name'] ?? 'Usuário',
+          'imageUrl': item['image'] ?? '',
+          'points': item['totalScore'] ?? 0,
+        };
+      }).toList(),
+    );
+
+    nationalRanking.clear();
+    nationalRanking.addAll(
+      nationalData.map((item) {
         return {
           'name': item['name'] ?? 'Usuário',
           'imageUrl': item['image'] ?? '',
