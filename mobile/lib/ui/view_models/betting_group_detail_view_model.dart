@@ -1,53 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/services/betting_group_service.dart';
+import 'package:mobile/services/match_service.dart';
 
 class BettingGroupDetailViewModel extends ChangeNotifier {
   final BettingGroupService _bettingGroupService = BettingGroupService();
+  final MatchService _matchService = MatchService();
 
   // 0 para palpites 1 para ranking
   int selectedTabIndex = 1;
 
   final List<Map<String, dynamic>> rankingData = [];
+  final List<Map<String, dynamic>> predications = [];
 
-  final List<Map<String, dynamic>> predications = [
-    {
-      'match': 'Bahia vs. Vitória',
-      'status': 'SCHEDULED',
-      'type': 'EXACT_SCORE',
-      'homeTeam': 'BAH',
-      'awayTeam': 'VIT',
-      'homeScore': 2,
-      'awayScore': 1,
-      'homeScorePrediction': 2,
-      'awayScorePrediction': 1,
-      'resultGuess': 'NULLED',
-      'time': '* 42\'',
-      'isOpined': true,
-    },
-    {
-      'match': 'Flamengo vs. Fluminense',
-      'status': 'SCHEDULED',
-      'type': 'MATCH_RESULT',
-      'homeTeam': 'FLA',
-      'awayTeam': 'FLU',
-      'homeScore': 1,
-      'awayScore': 1,
-      'homeScorePrediction': null,
-      'awayScorePrediction': null,
-      'resultGuess': 'HOME_WIN',
-      'time': '* 30\'',
-      'isOpined': true,
-    },
-  ];
-
-  String groupName = "Bolão do Rodrigão";
-  String creatorName = "Rodrigo G.";
-  final List<String> avatars = [
-    'https://i.pravatar.cc/150?img=1',
-    'https://i.pravatar.cc/150?img=2',
-    'https://i.pravatar.cc/150?img=3',
-    'https://i.pravatar.cc/150?img=4',
-  ];
+  String groupName = "Bolão";
+  String creatorName = "Criador";
+  final List<String> avatars = [];
   int additionalCount = 0;
 
   void setTab(int index) {
@@ -59,6 +26,7 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
     print('===> Chamando loadGroupDetails com código $code');
     await loadDetails(code);
     await getGroupRanking(code);
+    await loadMatches(code);
 
     avatars.clear();
     avatars.addAll(rankingData.map((item) => item['imageUrl'] as String).where((url) => url.isNotEmpty).take(4));
@@ -71,6 +39,55 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> loadMatches(String code) async {
+    if (code.isEmpty) return;
+    final matches = await _matchService.getCurrentRoundMatches(code);
+    
+    predications.clear();
+    
+    for (var match in matches) {
+      final timeStr = "${match.matchDate.hour.toString().padLeft(2, '0')}:${match.matchDate.minute.toString().padLeft(2, '0')}";
+      
+      // Buscar se existe palpite do tipo EXACT_SCORE
+      final exactScorePred = match.predictions.where((p) => p.type.value == 'EXACT_SCORE').firstOrNull;
+      
+      predications.add({
+        'match': '${match.homeTeam.name} vs. ${match.awayTeam.name}',
+        'status': match.status.value,
+        'type': 'EXACT_SCORE',
+        'homeTeam': match.homeTeam.abbreviatedName,
+        'awayTeam': match.awayTeam.abbreviatedName,
+        'homeScore': match.homeScore,
+        'awayScore': match.awayScore,
+        'homeScorePrediction': exactScorePred?.homeScoreGuess,
+        'awayScorePrediction': exactScorePred?.awayScoreGuess,
+        'resultGuess': exactScorePred?.resultGuess?.value ?? 'NULLED',
+        'time': timeStr,
+        'isOpined': exactScorePred != null && (exactScorePred.homeScoreGuess != null || exactScorePred.awayScoreGuess != null),
+      });
+
+      // Buscar se existe palpite do tipo MATCH_RESULT
+      final matchResultPred = match.predictions.where((p) => p.type.value == 'MATCH_RESULT').firstOrNull;
+
+      predications.add({
+        'match': '${match.homeTeam.name} vs. ${match.awayTeam.name}',
+        'status': match.status.value,
+        'type': 'MATCH_RESULT',
+        'homeTeam': match.homeTeam.abbreviatedName,
+        'awayTeam': match.awayTeam.abbreviatedName,
+        'homeScore': match.homeScore,
+        'awayScore': match.awayScore,
+        'homeScorePrediction': matchResultPred?.homeScoreGuess,
+        'awayScorePrediction': matchResultPred?.awayScoreGuess,
+        'resultGuess': matchResultPred?.resultGuess?.value ?? 'NULLED',
+        'time': timeStr,
+        'isOpined': matchResultPred != null && matchResultPred.resultGuess != null,
+      });
+    }
+    notifyListeners();
+  }
+
 
   Future<void> getGroupRanking(String code) async {
     if (code.isEmpty) return;

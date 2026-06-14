@@ -1,43 +1,20 @@
 import 'package:flutter/material.dart';
 
 class PredicationBettingGroupViewModel extends ChangeNotifier {
-
-  final List<Map<String, dynamic>> predicationsExactScore = [
-    {
-      'match': 'Bahia vs. Vitória', 
-      'status': 'SCHEDULED',
-      'type': 'EXACT_SCORE',
-      'homeTeam': 'BAH',
-      'awayTeam': 'VIT',
-      'homeScore': 2,
-      'awayScore': 1,
-      'homeScorePrediction': 2,
-      'awayScorePrediction': 1, 
-      'resultGuess': 'NULLED', 
-      'time': '* 42\'',
-      'isOpined': true,
-    }
-  ];
-
-  final List<Map<String, dynamic>> predicationsMatchResult = [
-    {
-      'match': 'Flamengo vs. Fluminense', 
-      'status': 'SCHEDULED',
-      'type': 'MATCH_RESULT',
-      'homeTeam': 'FLA',
-      'awayTeam': 'FLU',
-      'homeScore': 1,
-      'awayScore': 1,
-      'homeScorePrediction': null,
-      'awayScorePrediction': null, 
-      'resultGuess': 'HOME_WIN', 
-      'time': '* 30\'',
-      'isOpined': true,
-    },
-  ];
-
+  final List<Map<String, dynamic>> predicationsExactScore = [];
+  final List<Map<String, dynamic>> predicationsMatchResult = [];
 
   int selectedTabIndex = 0;
+
+  PredicationBettingGroupViewModel(List<Map<String, dynamic>> predications) {
+    for (var p in predications) {
+      if (p['type'] == 'EXACT_SCORE') {
+        predicationsExactScore.add(p);
+      } else if (p['type'] == 'MATCH_RESULT') {
+        predicationsMatchResult.add(p);
+      }
+    }
+  }
 
   void setTab(int index) {
     selectedTabIndex = index;

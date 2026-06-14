@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/components/cards/predication.dart';
 
 class ListPredications extends StatelessWidget {
-  final List<dynamic> predications;
+  final List<Map<String, dynamic>> predications;
 
   const ListPredications({super.key, required this.predications});
 
@@ -24,6 +24,7 @@ class ListPredications extends StatelessWidget {
           homeScorePrediction: prediction['homeScorePrediction'],
           awayScorePrediction: prediction['awayScorePrediction'],
           resultGuess: ResultGuessEnum.values.firstWhere((e) => e.value == prediction['resultGuess']),
+          isOpined: prediction['isOpined'] ?? false,
         );
       },
     );

@@ -221,21 +221,23 @@ class _PredicationState extends State<Predication> {
           ],
           const SizedBox(height: 16),
           TertiaryButton(
-            icon: LucideIcons.check,
-            text: 'COMFIRMAR PALPITE',
+            icon: widget.isOpined ? LucideIcons.checkCheck : LucideIcons.check,
+            text: widget.isOpined ? 'JÁ PALPITADO' : 'CONFIRMAR PALPITE',
             isLoading: false,
-            onPressed: () {
-              if (_selectedResult == ResultGuessEnum.nulled) {
-                setState(() {
-                  _errorText = 'selecione alguma opção';
-                });
-              } else {
-                setState(() {
-                  _errorText = null;
-                });
-                widget.onOpinar?.call(_selectedResult);
-              }
-            },
+            onPressed: widget.isOpined
+                ? null
+                : () {
+                    if (widget.type == TypePredicationEnum.result && _selectedResult == ResultGuessEnum.nulled) {
+                      setState(() {
+                        _errorText = 'selecione alguma opção';
+                      });
+                    } else {
+                      setState(() {
+                        _errorText = null;
+                      });
+                      widget.onOpinar?.call(_selectedResult);
+                    }
+                  },
           ),
         ],
       ),

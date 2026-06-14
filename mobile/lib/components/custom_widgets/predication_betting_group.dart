@@ -6,7 +6,7 @@ import 'package:mobile/ui/view_models/predication_betting_group_view_model.dart'
 import 'package:provider/provider.dart';
 
 class PredicationBettingGroup extends StatefulWidget {
-  final List<dynamic> predications;
+  final List<Map<String, dynamic>> predications;
 
   const PredicationBettingGroup({super.key, required this.predications});
 
@@ -26,7 +26,7 @@ class _PredicationBettingGroupState extends State<PredicationBettingGroup> {
       ),
     )
     : ChangeNotifierProvider(
-      create: (context) => PredicationBettingGroupViewModel(),
+      create: (context) => PredicationBettingGroupViewModel(widget.predications),
       child: Builder(
         builder: (context) {
           final vm = context.watch<PredicationBettingGroupViewModel>();
