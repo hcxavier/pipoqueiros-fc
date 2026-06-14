@@ -46,7 +46,7 @@ class Predication extends StatefulWidget {
   final ResultGuessEnum resultGuess;
   final bool isOpined;
   final Widget? opined;
-  final void Function(ResultGuessEnum)? onOpinar;
+  final Future<void> Function(ResultGuessEnum? result, int? homeScore, int? awayScore)? onOpinar;
 
   const Predication({
     super.key,
@@ -72,12 +72,17 @@ class Predication extends StatefulWidget {
 
 class _PredicationState extends State<Predication> {
   String? _errorText;
+  bool _isLoading = false;
   late ResultGuessEnum _selectedResult;
+  late TextEditingController _homeScoreController;
+  late TextEditingController _awayScoreController;
 
   @override
   void initState() {
     super.initState();
     _selectedResult = widget.resultGuess;
+    _homeScoreController = TextEditingController(text: widget.homeScorePrediction?.toString() ?? '');
+    _awayScoreController = TextEditingController(text: widget.awayScorePrediction?.toString() ?? '');
   }
 
   @override
@@ -86,6 +91,19 @@ class _PredicationState extends State<Predication> {
     if (widget.resultGuess != oldWidget.resultGuess) {
       _selectedResult = widget.resultGuess;
     }
+    if (widget.homeScorePrediction != oldWidget.homeScorePrediction) {
+      _homeScoreController.text = widget.homeScorePrediction?.toString() ?? '';
+    }
+    if (widget.awayScorePrediction != oldWidget.awayScorePrediction) {
+      _awayScoreController.text = widget.awayScorePrediction?.toString() ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _homeScoreController.dispose();
+    _awayScoreController.dispose();
+    super.dispose();
   }
 
   @override
@@ -197,7 +215,7 @@ class _PredicationState extends State<Predication> {
                 Expanded(
                   child: OptionScore(
                     team: widget.homeTeam ?? 'Mandante',
-                    controller: TextEditingController(text: widget.homeScorePrediction?.toString() ?? ''),
+                    controller: _homeScoreController,
                   ),
                 ),
                 const SizedBox(width: 48),
@@ -206,7 +224,7 @@ class _PredicationState extends State<Predication> {
                 Expanded(
                   child: OptionScore(
                     team: widget.awayTeam ?? 'Visitante',
-                    controller: TextEditingController(text: widget.awayScorePrediction?.toString() ?? ''),
+                    controller: _awayScoreController,
                     left: true,
                   ),
                 ),
@@ -223,19 +241,35 @@ class _PredicationState extends State<Predication> {
           TertiaryButton(
             icon: widget.isOpined ? LucideIcons.checkCheck : LucideIcons.check,
             text: widget.isOpined ? 'JÁ PALPITADO' : 'CONFIRMAR PALPITE',
-            isLoading: false,
-            onPressed: widget.isOpined
+            isLoading: _isLoading,
+            onPressed: widget.isOpined || _isLoading
                 ? null
-                : () {
+                : () async {
                     if (widget.type == TypePredicationEnum.result && _selectedResult == ResultGuessEnum.nulled) {
                       setState(() {
                         _errorText = 'selecione alguma opção';
                       });
+                    } else if (widget.type == TypePredicationEnum.exact && (_homeScoreController.text.isEmpty || _awayScoreController.text.isEmpty)) {
+                      setState(() {
+                        _errorText = 'preencha os placares';
+                      });
                     } else {
                       setState(() {
                         _errorText = null;
+                        _isLoading = true;
                       });
-                      widget.onOpinar?.call(_selectedResult);
+                      final homeScore = int.tryParse(_homeScoreController.text);
+                      final awayScore = int.tryParse(_awayScoreController.text);
+                      await widget.onOpinar?.call(
+                        widget.type == TypePredicationEnum.result ? _selectedResult : null,
+                        widget.type == TypePredicationEnum.exact ? homeScore : null,
+                        widget.type == TypePredicationEnum.exact ? awayScore : null,
+                      );
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
                     }
                   },
           ),

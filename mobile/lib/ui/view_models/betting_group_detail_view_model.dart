@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/services/betting_group_service.dart';
 import 'package:mobile/services/match_service.dart';
+import 'package:mobile/services/prediction_service.dart';
 
 class BettingGroupDetailViewModel extends ChangeNotifier {
   final BettingGroupService _bettingGroupService = BettingGroupService();
   final MatchService _matchService = MatchService();
+  final PredictionService _predictionService = PredictionService();
 
   // 0 para palpites 1 para ranking
   int selectedTabIndex = 1;
@@ -53,6 +55,8 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       final exactScorePred = match.predictions.where((p) => p.type.value == 'EXACT_SCORE').firstOrNull;
       
       predications.add({
+        'matchId': match.id,
+        'groupCode': code,
         'match': '${match.homeTeam.name} vs. ${match.awayTeam.name}',
         'status': match.status.value,
         'type': 'EXACT_SCORE',
@@ -71,6 +75,8 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       final matchResultPred = match.predictions.where((p) => p.type.value == 'MATCH_RESULT').firstOrNull;
 
       predications.add({
+        'matchId': match.id,
+        'groupCode': code,
         'match': '${match.homeTeam.name} vs. ${match.awayTeam.name}',
         'status': match.status.value,
         'type': 'MATCH_RESULT',
@@ -86,6 +92,29 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
       });
     }
     notifyListeners();
+  }
+
+  Future<bool> submitPrediction({
+    required int matchId,
+    required String type,
+    int? homeScore,
+    int? awayScore,
+    String? result,
+    required String groupCode,
+  }) async {
+    final success = await _predictionService.submitPrediction(
+      matchId: matchId,
+      predicationType: type,
+      homeScoreGuess: homeScore,
+      awayScoreGuess: awayScore,
+      resultGuess: result,
+      bettingGroupCode: groupCode,
+    );
+
+    if (success) {
+      await loadMatches(groupCode);
+    }
+    return success;
   }
 
 
