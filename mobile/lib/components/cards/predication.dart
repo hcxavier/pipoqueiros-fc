@@ -328,6 +328,10 @@ class _PredicationState extends State<Predication> {
   }
 
   Color getColor(TypePredicationEnum type) {
+    if (!widget.isOpined) {
+      return AppColors.borderPrimary;
+    }
+
     if (type == TypePredicationEnum.exact) {
       if (widget.homeScorePrediction == widget.homeScore && widget.awayScorePrediction == widget.awayScore) {
         return AppColors.greenPrimary;
