@@ -45,6 +45,7 @@ class Predication extends StatefulWidget {
   final int? awayScorePrediction;
   final ResultGuessEnum resultGuess;
   final bool isOpined;
+  final bool isTimeOver;
   final Widget? opined;
   final Future<void> Function(ResultGuessEnum? result, int? homeScore, int? awayScore)? onOpinar;
 
@@ -63,6 +64,7 @@ class Predication extends StatefulWidget {
     this.awayScorePrediction,
     required this.resultGuess,
     this.isOpined = false,
+    this.isTimeOver = false,
     this.opined,
   });
 
@@ -106,6 +108,42 @@ class _PredicationState extends State<Predication> {
     super.dispose();
   }
 
+  Widget _buildStatusBadge() {
+    String text;
+    Color bgColor;
+    Color textColor;
+
+    switch (widget.matchStatus) {
+      case MatchStatus.upcoming:
+        text = 'AGENDADO';
+        bgColor = AppColors.bgSecondaryButton;
+        textColor = AppColors.yellowPrimary;
+        break;
+      case MatchStatus.live:
+        text = 'AO VIVO';
+        bgColor = AppColors.bgLight;
+        textColor = AppColors.greenPrimary;
+        break;
+      case MatchStatus.finished:
+        text = 'ENCERRADO';
+        bgColor = AppColors.bgTertiary;
+        textColor = AppColors.textMuted;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: AppFonts.time.copyWith(color: textColor, fontSize: 10),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -135,7 +173,14 @@ class _PredicationState extends State<Predication> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (widget.time != null) ...[
-            Text(widget.time!, style: AppFonts.time),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(widget.time!, style: AppFonts.time),
+                const SizedBox(width: 8),
+                _buildStatusBadge(),
+              ],
+            ),
             const SizedBox(height: 12),
           ],
           Text(widget.match, style: AppFonts.titleSmall),
@@ -239,10 +284,14 @@ class _PredicationState extends State<Predication> {
           ],
           const SizedBox(height: 16),
           TertiaryButton(
-            icon: widget.isOpined ? LucideIcons.checkCheck : LucideIcons.check,
-            text: widget.isOpined ? 'JÁ PALPITADO' : 'CONFIRMAR PALPITE',
+            icon: widget.isOpined 
+                ? LucideIcons.checkCheck 
+                : (widget.isTimeOver ? LucideIcons.clock : LucideIcons.check),
+            text: widget.isOpined 
+                ? 'JÁ PALPITADO' 
+                : (widget.isTimeOver ? 'TEMPO ACABOU' : 'CONFIRMAR PALPITE'),
             isLoading: _isLoading,
-            onPressed: widget.isOpined || _isLoading
+            onPressed: widget.isTimeOver || widget.isOpined || _isLoading
                 ? null
                 : () async {
                     if (widget.type == TypePredicationEnum.result && _selectedResult == ResultGuessEnum.nulled) {

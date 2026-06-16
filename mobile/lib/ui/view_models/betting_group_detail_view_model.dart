@@ -49,11 +49,19 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
     predications.clear();
     
     for (var match in matches) {
-      final timeStr = "${match.matchDate.hour.toString().padLeft(2, '0')}:${match.matchDate.minute.toString().padLeft(2, '0')}";
-      
+      final localDate = match.matchDate.toLocal();
+      final day = localDate.day.toString().padLeft(2, '0');
+      final month = localDate.month.toString().padLeft(2, '0');
+      final year = localDate.year.toString();
+      final timeStr = "$day/$month/$year às ${localDate.hour.toString().padLeft(2, '0')}:${localDate.minute.toString().padLeft(2, '0')}";
+
+      final now = DateTime.now();
+      final limitTime = localDate.subtract(const Duration(minutes: 5));
+      final isTimeOver = now.isAfter(limitTime);
+
       // Buscar se existe palpite do tipo EXACT_SCORE
       final exactScorePred = match.predictions.where((p) => p.type.value == 'EXACT_SCORE').firstOrNull;
-      
+
       predications.add({
         'matchId': match.id,
         'groupCode': code,
@@ -69,6 +77,7 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
         'resultGuess': exactScorePred?.resultGuess?.value ?? 'NULLED',
         'time': timeStr,
         'isOpined': exactScorePred != null && (exactScorePred.homeScoreGuess != null || exactScorePred.awayScoreGuess != null),
+        'isTimeOver': isTimeOver,
       });
 
       // Buscar se existe palpite do tipo MATCH_RESULT
@@ -89,6 +98,7 @@ class BettingGroupDetailViewModel extends ChangeNotifier {
         'resultGuess': matchResultPred?.resultGuess?.value ?? 'NULLED',
         'time': timeStr,
         'isOpined': matchResultPred != null && matchResultPred.resultGuess != null,
+        'isTimeOver': isTimeOver,
       });
     }
     notifyListeners();

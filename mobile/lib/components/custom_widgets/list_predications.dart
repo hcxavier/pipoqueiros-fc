@@ -26,6 +26,7 @@ class ListPredications extends StatelessWidget {
           awayScorePrediction: prediction['awayScorePrediction'],
           resultGuess: ResultGuessEnum.values.firstWhere((e) => e.value == prediction['resultGuess']),
           isOpined: prediction['isOpined'] ?? false,
+          isTimeOver: prediction['isTimeOver'] ?? false,
           onOpinar: (result, homeScore, awayScore) async {
             await onOpinar?.call(
               prediction['matchId'] as int,
