@@ -24,14 +24,18 @@ class TertiaryButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.greenPrimary,
           foregroundColor: AppColors.white,
+          disabledBackgroundColor: AppColors.bgTertiary,
+          disabledForegroundColor: AppColors.textMuted,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         ),
         child: isLoading ? const SizedBox(width: 21, height: 21, child: CircularProgressIndicator(color: AppColors.white)) : icon == null ? Text(text ?? '') : Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: AppColors.white),
-            SizedBox(width: 10),
-            Text(text ?? '', style: AppFonts.captionBold.copyWith(color: AppColors.white)),
+            if (icon != null) ...[
+              Icon(icon, size: 24),
+              const SizedBox(width: 10),
+            ],
+            Text(text ?? '', style: AppFonts.captionBold.copyWith(color: onPressed == null ? AppColors.textMuted : AppColors.white)),
           ],
         ),
       ),

@@ -45,8 +45,9 @@ class Predication extends StatefulWidget {
   final int? awayScorePrediction;
   final ResultGuessEnum resultGuess;
   final bool isOpined;
+  final bool isTimeOver;
   final Widget? opined;
-  final void Function(ResultGuessEnum)? onOpinar;
+  final Future<void> Function(ResultGuessEnum? result, int? homeScore, int? awayScore)? onOpinar;
 
   const Predication({
     super.key,
@@ -63,6 +64,7 @@ class Predication extends StatefulWidget {
     this.awayScorePrediction,
     required this.resultGuess,
     this.isOpined = false,
+    this.isTimeOver = false,
     this.opined,
   });
 
@@ -72,12 +74,17 @@ class Predication extends StatefulWidget {
 
 class _PredicationState extends State<Predication> {
   String? _errorText;
+  bool _isLoading = false;
   late ResultGuessEnum _selectedResult;
+  late TextEditingController _homeScoreController;
+  late TextEditingController _awayScoreController;
 
   @override
   void initState() {
     super.initState();
     _selectedResult = widget.resultGuess;
+    _homeScoreController = TextEditingController(text: widget.homeScorePrediction?.toString() ?? '');
+    _awayScoreController = TextEditingController(text: widget.awayScorePrediction?.toString() ?? '');
   }
 
   @override
@@ -86,6 +93,55 @@ class _PredicationState extends State<Predication> {
     if (widget.resultGuess != oldWidget.resultGuess) {
       _selectedResult = widget.resultGuess;
     }
+    if (widget.homeScorePrediction != oldWidget.homeScorePrediction) {
+      _homeScoreController.text = widget.homeScorePrediction?.toString() ?? '';
+    }
+    if (widget.awayScorePrediction != oldWidget.awayScorePrediction) {
+      _awayScoreController.text = widget.awayScorePrediction?.toString() ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _homeScoreController.dispose();
+    _awayScoreController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildStatusBadge() {
+    String text;
+    Color bgColor;
+    Color textColor;
+
+    switch (widget.matchStatus) {
+      case MatchStatus.upcoming:
+        text = 'AGENDADO';
+        bgColor = AppColors.bgSecondaryButton;
+        textColor = AppColors.yellowPrimary;
+        break;
+      case MatchStatus.live:
+        text = 'AO VIVO';
+        bgColor = AppColors.bgLight;
+        textColor = AppColors.greenPrimary;
+        break;
+      case MatchStatus.finished:
+        text = 'ENCERRADO';
+        bgColor = AppColors.bgTertiary;
+        textColor = AppColors.textMuted;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: AppFonts.time.copyWith(color: textColor, fontSize: 10),
+      ),
+    );
   }
 
   @override
@@ -117,7 +173,14 @@ class _PredicationState extends State<Predication> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (widget.time != null) ...[
-            Text(widget.time!, style: AppFonts.time),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(widget.time!, style: AppFonts.time),
+                const SizedBox(width: 8),
+                _buildStatusBadge(),
+              ],
+            ),
             const SizedBox(height: 12),
           ],
           Text(widget.match, style: AppFonts.titleSmall),
@@ -197,7 +260,7 @@ class _PredicationState extends State<Predication> {
                 Expanded(
                   child: OptionScore(
                     team: widget.homeTeam ?? 'Mandante',
-                    controller: TextEditingController(text: widget.homeScorePrediction?.toString() ?? ''),
+                    controller: _homeScoreController,
                   ),
                 ),
                 const SizedBox(width: 48),
@@ -206,7 +269,7 @@ class _PredicationState extends State<Predication> {
                 Expanded(
                   child: OptionScore(
                     team: widget.awayTeam ?? 'Visitante',
-                    controller: TextEditingController(text: widget.awayScorePrediction?.toString() ?? ''),
+                    controller: _awayScoreController,
                     left: true,
                   ),
                 ),
@@ -221,21 +284,43 @@ class _PredicationState extends State<Predication> {
           ],
           const SizedBox(height: 16),
           TertiaryButton(
-            icon: LucideIcons.check,
-            text: 'COMFIRMAR PALPITE',
-            isLoading: false,
-            onPressed: () {
-              if (_selectedResult == ResultGuessEnum.nulled) {
-                setState(() {
-                  _errorText = 'selecione alguma opção';
-                });
-              } else {
-                setState(() {
-                  _errorText = null;
-                });
-                widget.onOpinar?.call(_selectedResult);
-              }
-            },
+            icon: widget.isOpined 
+                ? LucideIcons.checkCheck 
+                : (widget.isTimeOver ? LucideIcons.clock : LucideIcons.check),
+            text: widget.isOpined 
+                ? 'JÁ PALPITADO' 
+                : (widget.isTimeOver ? 'TEMPO ACABOU' : 'CONFIRMAR PALPITE'),
+            isLoading: _isLoading,
+            onPressed: widget.isTimeOver || widget.isOpined || _isLoading
+                ? null
+                : () async {
+                    if (widget.type == TypePredicationEnum.result && _selectedResult == ResultGuessEnum.nulled) {
+                      setState(() {
+                        _errorText = 'selecione alguma opção';
+                      });
+                    } else if (widget.type == TypePredicationEnum.exact && (_homeScoreController.text.isEmpty || _awayScoreController.text.isEmpty)) {
+                      setState(() {
+                        _errorText = 'preencha os placares';
+                      });
+                    } else {
+                      setState(() {
+                        _errorText = null;
+                        _isLoading = true;
+                      });
+                      final homeScore = int.tryParse(_homeScoreController.text);
+                      final awayScore = int.tryParse(_awayScoreController.text);
+                      await widget.onOpinar?.call(
+                        widget.type == TypePredicationEnum.result ? _selectedResult : null,
+                        widget.type == TypePredicationEnum.exact ? homeScore : null,
+                        widget.type == TypePredicationEnum.exact ? awayScore : null,
+                      );
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    }
+                  },
           ),
         ],
       ),
@@ -243,6 +328,10 @@ class _PredicationState extends State<Predication> {
   }
 
   Color getColor(TypePredicationEnum type) {
+    if (!widget.isOpined) {
+      return AppColors.borderPrimary;
+    }
+
     if (type == TypePredicationEnum.exact) {
       if (widget.homeScorePrediction == widget.homeScore && widget.awayScorePrediction == widget.awayScore) {
         return AppColors.greenPrimary;

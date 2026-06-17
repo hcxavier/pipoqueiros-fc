@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mobile/components/cards/predication.dart';
 
 class ListPredications extends StatelessWidget {
-  final List<dynamic> predications;
+  final List<Map<String, dynamic>> predications;
+  final Future<void> Function(int matchId, String type, int? homeScore, int? awayScore, String? result, String groupCode)? onOpinar;
 
-  const ListPredications({super.key, required this.predications});
+  const ListPredications({super.key, required this.predications, this.onOpinar});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,18 @@ class ListPredications extends StatelessWidget {
           homeScorePrediction: prediction['homeScorePrediction'],
           awayScorePrediction: prediction['awayScorePrediction'],
           resultGuess: ResultGuessEnum.values.firstWhere((e) => e.value == prediction['resultGuess']),
+          isOpined: prediction['isOpined'] ?? false,
+          isTimeOver: prediction['isTimeOver'] ?? false,
+          onOpinar: (result, homeScore, awayScore) async {
+            await onOpinar?.call(
+              prediction['matchId'] as int,
+              prediction['type'] as String,
+              homeScore,
+              awayScore,
+              result?.value,
+              prediction['groupCode'] as String,
+            );
+          },
         );
       },
     );

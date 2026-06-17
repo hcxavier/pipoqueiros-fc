@@ -67,6 +67,7 @@ class _NewBettingGroupPageState extends State<NewBettingGroupPage> {
                               if (bettingGroupId == null) {
                                 return;
                               }
+                              if (!context.mounted) return;
                               Navigator.pushNamed(context, '/detail-betting-group', arguments: bettingGroupId);
                             },
                           ),

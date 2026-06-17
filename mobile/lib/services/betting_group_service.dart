@@ -7,7 +7,7 @@ class BettingGroupService {
   BettingGroupService({ApiService? apiService})
     : _api = apiService ?? ApiService();
 
-  Future<int?> createBettingGroup(String name) async {
+  Future<String?> createBettingGroup(String name) async {
     try {
       final response = await _api.post('/betting-groups', data: {'name': name});
       if (response.statusCode != 201) {
@@ -21,9 +21,13 @@ class BettingGroupService {
       if (groupData == null) {
         return null;
       }
+      final code = groupData['code'];
+      if (code != null) {
+        return code.toString();
+      }
       final id = groupData['id'];
-      if (id is int) {
-        return id;
+      if (id != null) {
+        return id.toString();
       }
     } on DioException catch (e) {
       print('Erro ao criar bolão: ${e.message}');

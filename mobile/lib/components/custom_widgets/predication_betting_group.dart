@@ -3,10 +3,11 @@ import 'package:mobile/components/custom_widgets/list_predications.dart';
 import 'package:mobile/components/widgets.dart';
 import 'package:mobile/constants/styles.dart';
 import 'package:mobile/ui/view_models/predication_betting_group_view_model.dart';
+import 'package:mobile/ui/view_models/betting_group_detail_view_model.dart';
 import 'package:provider/provider.dart';
 
 class PredicationBettingGroup extends StatefulWidget {
-  final List<dynamic> predications;
+  final List<Map<String, dynamic>> predications;
 
   const PredicationBettingGroup({super.key, required this.predications});
 
@@ -30,6 +31,10 @@ class _PredicationBettingGroupState extends State<PredicationBettingGroup> {
       child: Builder(
         builder: (context) {
           final vm = context.watch<PredicationBettingGroupViewModel>();
+          final mainVm = context.read<BettingGroupDetailViewModel>();
+          final matchResults = widget.predications.where((p) => p['type'] == 'MATCH_RESULT').toList();
+          final exactScores = widget.predications.where((p) => p['type'] == 'EXACT_SCORE').toList();
+          
           return Column(
               children: [
                 SwitchTab(
@@ -41,8 +46,32 @@ class _PredicationBettingGroupState extends State<PredicationBettingGroup> {
               const SizedBox(height: 16),
               Expanded(
                 child: vm.selectedTabIndex == 0
-                  ? ListPredications(predications: vm.predicationsMatchResult)
-                  : ListPredications(predications: vm.predicationsExactScore),
+                  ? ListPredications(
+                      predications: matchResults,
+                      onOpinar: (matchId, type, homeScore, awayScore, result, groupCode) async {
+                        await mainVm.submitPrediction(
+                          matchId: matchId,
+                          type: type,
+                          homeScore: homeScore,
+                          awayScore: awayScore,
+                          result: result,
+                          groupCode: groupCode,
+                        );
+                      },
+                    )
+                  : ListPredications(
+                      predications: exactScores,
+                      onOpinar: (matchId, type, homeScore, awayScore, result, groupCode) async {
+                        await mainVm.submitPrediction(
+                          matchId: matchId,
+                          type: type,
+                          homeScore: homeScore,
+                          awayScore: awayScore,
+                          result: result,
+                          groupCode: groupCode,
+                        );
+                      },
+                    ),
               ),
             ],
           );

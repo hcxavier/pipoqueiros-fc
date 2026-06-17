@@ -19,17 +19,21 @@ class NewBettingGroupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int?> createGroup() async {
+  Future<String?> createGroup() async {
     final validationError = nameBettingGroupValidator(nameController.text);
     if (validationError != null) {
       return null;
     }
 
     setLoading(true);
-    final id = await _bettingGroupService.createBettingGroup(nameController.text);
+    final idOrCode = await _bettingGroupService.createBettingGroup(nameController.text);
     setLoading(false);
 
-    return id;
+    if (idOrCode != null) {
+      nameController.clear();
+    }
+
+    return idOrCode;
   }
 
   @override
